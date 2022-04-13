@@ -42,6 +42,7 @@ public class CfOptChange {
         private FieldConfigScheme fieldConfSch;
         private FieldConfig fieldConf;
         private OptionsManager optMgr;
+        boolean builtSuccessfully = false;
 
 
         MutableOptionsList(String fKey, String pKey, Logger logger) {
@@ -95,6 +96,7 @@ public class CfOptChange {
             } else {
                 logger.log(Level.WARNING, "field options fails to get acquired");
             }
+            builtSuccessfully = true;
             logger.info("MutableOptionsList object constructed successfully");
         }
 
@@ -109,7 +111,10 @@ public class CfOptChange {
         }
 
         private boolean addNew(String newOption, Logger logger) {
-            if (newOption == null) {
+            if (newOption == null || !builtSuccessfully) {
+                logger.warning("something goes wrong. newOption = " + newOption
+                        + "; MutableOptionsList built successfully - "
+                        + builtSuccessfully);
                 return false;
             }
             logger.info("trying to add new option \"" + newOption + "\"");
@@ -166,15 +171,17 @@ public class CfOptChange {
         Logger logger = settingLogger();
         logger.info("starting getMessage method...");
         MutableOptionsList mol = new MutableOptionsList(field_id, proj_id, logger);
+        Response response;
         if (mol.addNew(new_opt, logger)) {
-            logger.info("option \"" + new_opt + "\" was added successfully");
+            response = Response.ok(new CfOptChangeModel(mol.field.getName()
+                    , mol.project.getName(), mol.fieldConfSch.getName()
+                    , mol.fieldConf.getName(), mol.getOptionsString(), mol.fieldKey
+                    , mol.projectKey)).build();
         } else {
-            logger.info("option \"" + new_opt + "\" wasn't added");
+            logger.warning("returning null response, cuz something went wrong on previous stages");
+            response = Response.ok(new CfOptChangeModel(null, null, null, null
+                    , null, null, null)).build();
         }
-        Response response = Response.ok(new CfOptChangeModel(mol.field.getName()
-                , mol.project.getName(), mol.fieldConfSch.getName()
-                , mol.fieldConf.getName(), mol.getOptionsString(), mol.fieldKey
-                , mol.projectKey)).build();
         logger.info("constructed response, returning...");
         LogManager.getLogManager().reset();
         return response;
