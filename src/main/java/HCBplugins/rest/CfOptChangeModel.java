@@ -17,22 +17,22 @@ public class CfOptChangeModel {
     @XmlElement(name = "optionsString")
     private String fieldOptionsString;
     @XmlAttribute
-    private String customfieldId;
+    private String customfieldKey;
     @XmlAttribute
     private String projectKey;
 
     public CfOptChangeModel() {
     }
 
-    public CfOptChangeModel(String customfieldId, String projectKey
-            , String[] contextAndOptions) {
-        this.fieldName = contextAndOptions[0];
-        this.projectName = contextAndOptions[1];
-        this.fieldConfigurationScheme = contextAndOptions[2];
-        this.fieldConfiguration = contextAndOptions[3];
-        this.fieldOptionsString = contextAndOptions[4];
-        this.customfieldId = customfieldId;
-        this.projectKey = projectKey;
+    public CfOptChangeModel(String fName, String pName, String fcsName
+            , String fcName, String fOptStr, String fKey, String pKey) {
+        this.fieldName = fName;
+        this.projectName = pName;
+        this.fieldConfigurationScheme = fcsName;
+        this.fieldConfiguration = fcName;
+        this.fieldOptionsString = fOptStr;
+        this.customfieldKey = fKey;
+        this.projectKey = pKey;
     }
 
     public String getOptStr() {
@@ -43,12 +43,12 @@ public class CfOptChangeModel {
         this.fieldOptionsString = optStr;
     }
 
-    public String getCustomfieldId() {
-        return customfieldId;
+    public String getCustomfieldKey() {
+        return customfieldKey;
     }
 
     public void setCustomfieldId(String customfieldId) {
-        this.customfieldId = customfieldId;
+        this.customfieldKey = customfieldId;
     }
 
 
