@@ -25,6 +25,8 @@ import java.util.logging.*;
 
 /**
  * A resource of message.
+ * the full path to API endpoint(?) looks like:
+ * http://{hostname}/jira/rest/cfoptchange/1.0/options
  */
 @Path("/options")
 public class CfOptChange {
@@ -44,7 +46,15 @@ public class CfOptChange {
         private OptionsManager optMgr;
         boolean builtSuccessfully = false;
 
-
+        /**********************************************************************
+         *
+         * @param fKey the key of the <em>customfield</em> from GET parameter
+         * @param pKey the key of the <em>project</em> from GET parameter
+         * @param logger just the logger, initialized before invoking the
+         *               constructor to keep track of what's going on
+         * potential problem - field can have more than one and only
+         *             configuration in in a given project
+         *********************************************************************/
         MutableOptionsList(String fKey, String pKey, Logger logger) {
             logger.info("field and project keys acquired are " + fKey + "; " + pKey);
             fieldKey = fKey;
@@ -79,6 +89,9 @@ public class CfOptChange {
                         , "FieldConfigSchemeManager fails to get Field Config Schema");
                 return;
             }
+            /* potential problem here. field can have more than one and only
+            configuration in in a given project
+            */
             fieldConf = fieldConfSch.getOneAndOnlyConfig();
             if (fieldConf != null) {
                 logger.info("field Configuration acquired as " + fieldConf);
@@ -100,6 +113,11 @@ public class CfOptChange {
             logger.info("MutableOptionsList object constructed successfully");
         }
 
+        /*********************************************************************
+         * method returns the list of options of customfield in single string
+         * @return <em>{"option_1", ... , "option_n"}</em> the string of options
+         * of invoking the method field instance
+         ********************************************************************/
         private String getOptionsString() {
             StringBuilder optStr = new StringBuilder("{");
             Options fieldOptions = optMgr.getOptions(fieldConf);
@@ -110,6 +128,13 @@ public class CfOptChange {
             return optStr.append("}").toString();
         }
 
+        /**********************************************************************
+         *
+         * @param newOption string - the <em>new option</em> from GET parameter
+         * @param logger just the logger, initialized before invoking the
+         *          constructor to keep track of what's going on
+         * @return <em>true</em> if the option added <em>false</em> if not on some reason
+         *********************************************************************/
         private boolean addNew(String newOption, Logger logger) {
             if (newOption == null || !builtSuccessfully) {
                 logger.warning("something goes wrong. newOption = " + newOption
@@ -136,6 +161,14 @@ public class CfOptChange {
         }
     }
 
+    /**************************************************************************
+     * method initialises new logger, adds new console and file handlers to it
+     * sets the log level to all and changes the system property of log format
+     * log string will look like
+     * Apr 14, 2022 5:08:49 PM HCBplugins.rest.CfOptChange settingLogger
+     * INFO: starting log....
+     * @return logger instance with console and file handler added to it
+     *************************************************************************/
     private static Logger settingLogger() {
         System.setProperty(
                 "java.util.logging.SimpleFormatter.format",
@@ -162,6 +195,17 @@ public class CfOptChange {
     }
 
     // http://localhost:2990/jira/rest/cfoptchange/1.0/options?field_id=customfield_10000&proj_id=TES&new_opt=new3
+
+    /**************************************************************************
+     * the core method which receives the GET parameters,
+     * initialises the logger, creates new instance of MutableOptionsList
+     * nested class, invokes the .addNew() method and constructs the response
+     * with CfOptChangeModel class constructor
+     * @param field_id the <em>key</em> of the <em>customfield</em> from GET parameter
+     * @param pKey the <em>key</em> of the <em>project</em> from GET parameter
+     * @param new_opt  string - the <em>new option</em> from GET parameter
+     * @return response in XML format
+     *************************************************************************/
     @GET
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -185,65 +229,5 @@ public class CfOptChange {
         logger.info("constructed response, returning...");
         LogManager.getLogManager().reset();
         return response;
-    }
-
-
-    private String[] setOpt(String field_id, String proj_id
-            , String new_opt, Logger logger) {
-        logger.info("starting getOptStrFromId method...");
-        String[] contextAndOptions = new String[5];
-        FieldManager fMgr = ComponentAccessor.getFieldManager();
-        logger.info("field manager acquired - " + fMgr);
-        ConfigurableField field = fMgr.getConfigurableField(field_id);
-        logger.info("field acquired - " + field);
-        contextAndOptions[0] = field.getName();
-        logger.info("field name is " + field.getName());
-
-        ProjectManager pMgr = ComponentAccessor.getProjectManager();
-        Project project = pMgr.getProjectByCurrentKeyIgnoreCase(proj_id);
-        logger.info("project manager acquired - " + pMgr);
-        contextAndOptions[1] = project.getName();
-        logger.info("project name is " + project.getName());
-
-        FieldConfigSchemeManager fcsMgr = ComponentAccessor.getFieldConfigSchemeManager();
-        FieldConfigScheme fieldConfSh = fcsMgr.getRelevantConfigScheme(project, field);
-        contextAndOptions[2] = fieldConfSh.getName();
-        logger.info("field configuration scheme name is " + fieldConfSh.getName());
-
-        FieldConfig config = fieldConfSh.getOneAndOnlyConfig();
-        contextAndOptions[3] = config.getName();
-        logger.info("field configuration name is " + config.getName());
-
-        OptionsManager optMgr = ComponentAccessor.getOptionsManager();
-        Options cfOptions = optMgr.getOptions(config);
-
-        boolean optExist = false;
-        if (new_opt != null) {
-            for (Option option : cfOptions) {
-                if (option.getValue().equals(new_opt)) {
-                    optExist = true;
-                    logger.warning("new option \"" + new_opt + "\" already exist");
-                    break;
-                }
-            }
-        }
-        int size = cfOptions.getRootOptions().size();
-        logger.info("there are " + size + "options in list now");
-        if (!optExist) {
-            logger.info("creating new option \"" + new_opt + "\"");
-            Option newOpt = optMgr.createOption(config, null, (long) (size + 1), new_opt);
-            logger.info("added option \"" + newOpt.getValue() + "\"");
-            cfOptions = optMgr.getOptions(config);
-            size = cfOptions.getRootOptions().size();
-            logger.info("there are " + size + "options in list now");
-        }
-        StringBuilder optStr = new StringBuilder("{");
-        for (Option option : cfOptions) {
-            optStr.append("\"").append(option.getValue()).append("\", ");
-        }
-        optStr.setLength(optStr.length() - 2);
-        contextAndOptions[4] = optStr.append("}").toString();
-        logger.info("returning contextAndOptions array");
-        return contextAndOptions;
     }
 }
