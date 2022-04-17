@@ -47,7 +47,6 @@ public class CfOptChange {
         boolean builtSuccessfully = false;
 
         /**********************************************************************
-         *
          * @param fKey the key of the <em>customfield</em> from GET parameter
          * @param pKey the key of the <em>project</em> from GET parameter
          * @param logger just the logger, initialized before invoking the
@@ -129,7 +128,6 @@ public class CfOptChange {
         }
 
         /**********************************************************************
-         *
          * @param newOption string - the <em>new option</em> from GET parameter
          * @param logger just the logger, initialized before invoking the
          *          constructor to keep track of what's going on
@@ -202,7 +200,7 @@ public class CfOptChange {
      * nested class, invokes the .addNew() method and constructs the response
      * with CfOptChangeModel class constructor
      * @param field_id the <em>key</em> of the <em>customfield</em> from GET parameter
-     * @param pKey the <em>key</em> of the <em>project</em> from GET parameter
+     * @param proj_id the <em>key</em> of the <em>project</em> from GET parameter
      * @param new_opt  string - the <em>new option</em> from GET parameter
      * @return response in XML format
      *************************************************************************/

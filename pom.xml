@@ -7,8 +7,8 @@
     <artifactId>REST4DevOps</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <organization>
-        <name>Example Cäompany</name>
-        <url>http://www.example.com/</url>
+        <name>Home Credit Bank</name>
+        <url>http://www.homecredit.ru/</url>
     </organization>
     <name>REST4DevOps</name>
     <description>This is the HCBplugins:REST4DevOps plugin for Atlassian JIRA.</description>
