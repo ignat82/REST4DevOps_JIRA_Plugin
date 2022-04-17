@@ -6,33 +6,35 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CfOptChangeModel {
 
-    @XmlElement(name = "fieldName")
-    private String fieldName;
-    @XmlElement(name = "projectName")
-    private String projectName;
-    @XmlElement(name = "fieldConfigurationScheme")
-    private String fieldConfigurationScheme;
-    @XmlElement(name = "fieldConfiguration")
-    private String fieldConfiguration;
-    @XmlElement(name = "optionsString")
-    private String fieldOptionsString;
     @XmlAttribute
     private String customfieldKey;
     @XmlAttribute
     private String projectKey;
+    @XmlAttribute(name = "newOption")
+    private String newOption;
+    @XmlElement(name = "fieldName")
+    private String fieldName;
+    @XmlElement(name = "projectName")
+    private String projectName;
+    @XmlElement(name = "fieldConfiguration")
+    private String fieldConfiguration;
+    @XmlElement(name = "optionsString")
+    private String fieldOptionsString;
+
 
     public CfOptChangeModel() {
     }
 
-    public CfOptChangeModel(String fName, String pName, String fcsName
-            , String fcName, String fOptStr, String fKey, String pKey) {
-        this.fieldName = fName;
-        this.projectName = pName;
-        this.fieldConfigurationScheme = fcsName;
-        this.fieldConfiguration = fcName;
-        this.fieldOptionsString = fOptStr;
-        this.customfieldKey = fKey;
-        this.projectKey = pKey;
+    //mol.fKey, mol.fName, mol.pKey, mol.pName, mol.fConfName, mol.newOpt, mol.optList
+    public CfOptChangeModel(String fKey, String fName, String pKey, String pName
+            , String fcName, String nOpt, String fOptStr) {
+        fieldName = fName;
+        projectName = pName;
+        fieldConfiguration = fcName;
+        newOption = nOpt;
+        fieldOptionsString = fOptStr;
+        customfieldKey = fKey;
+        projectKey = pKey;
     }
 
     public String getOptStr() {
