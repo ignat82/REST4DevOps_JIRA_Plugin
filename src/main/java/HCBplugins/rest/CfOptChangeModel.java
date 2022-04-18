@@ -25,16 +25,16 @@ public class CfOptChangeModel {
     public CfOptChangeModel() {
     }
 
-    //mol.fKey, mol.fName, mol.pKey, mol.pName, mol.fConfName, mol.newOpt, mol.optList
-    public CfOptChangeModel(String fKey, String fName, String pKey, String pName
-            , String fcName, String nOpt, String fOptStr) {
-        fieldName = fName;
-        projectName = pName;
-        fieldConfiguration = fcName;
-        newOption = nOpt;
-        fieldOptionsString = fOptStr;
-        customfieldKey = fKey;
-        projectKey = pKey;
+    public CfOptChangeModel(String customfieldKey, String fieldName
+            , String projectKey, String projectName, String fieldConfiguration
+            , String newOption, String fieldOptionsString) {
+        this.fieldName = fieldName;
+        this.projectName = projectName;
+        this.fieldConfiguration = fieldConfiguration;
+        this.newOption = newOption;
+        this.fieldOptionsString = fieldOptionsString;
+        this.customfieldKey = customfieldKey;
+        this.projectKey = projectKey;
     }
 
     public String getOptStr() {
