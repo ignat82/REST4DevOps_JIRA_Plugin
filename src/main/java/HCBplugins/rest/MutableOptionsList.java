@@ -1,6 +1,5 @@
 package HCBplugins.rest;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
@@ -22,36 +21,36 @@ import java.util.logging.Logger;
  * dependency of issue type is not implemented yet
  **************************************************************************/
 public class MutableOptionsList {
-    public String fKey = "not provided";
-    public String pKey = "not provided";
-    public String newOpt = "not provided";
-    public String fName = "not provided";
-    public String pName = "not provided";
-    public String fConfName = "failed to acquire";
-    public String optList = "failed to acquire";
+    public String fieldKey = "not provided";
+    public String projectKey = "not provided";
+    public String newOption = "not provided";
+    public String fieldName = "not provided";
+    public String projectName = "not provided";
+    public String fieldConfigName = "failed to acquire";
+    public String fieldOptionsString = "failed to acquire";
 
     /**********************************************************************
      * constructor just puts the field_key, project_key and new_option
      * GET parameters to appropriate attributes
-     * @param field_key the key of the <em>customfield</em> from GET parameter
-     * @param proj_key the key of the <em>project</em> from GET parameter
-     * @param new_opt new option content from GET parameter
+     * @param fieldKey the key of the <em>customfield</em> from GET parameter
+     * @param projectKey the key of the <em>project</em> from GET parameter
+     * @param newOption new option content from GET parameter
      * @param logger just the logger, initialized before invoking the
      *               constructor to keep track of what's going on
      *********************************************************************/
-    MutableOptionsList(String field_key, String proj_key, String new_opt
+    MutableOptionsList(String fieldKey, String projectKey, String newOption
             , Logger logger) {
         logger.info("starting constructor... field and project keys " +
-                "received are " + field_key + "; " + proj_key +
-                "; new option received is " + new_opt);
-        if (field_key != null) {
-            fKey = field_key;
+                "received are " + fieldKey + "; " + projectKey +
+                "; new option received is " + newOption);
+        if (fieldKey != null) {
+            this.fieldKey = fieldKey;
         }
-        if (proj_key != null) {
-            pKey = proj_key;
+        if (projectKey != null) {
+            this.projectKey = projectKey;
         }
-        if (new_opt != null) {
-            newOpt = new_opt;
+        if (newOption != null) {
+            this.newOption = newOption;
         }
     }
 
@@ -63,77 +62,57 @@ public class MutableOptionsList {
      * @param logger  just the logger, initialized before invoking the
      *  constructor to keep track of what's going on
      ************************************************************************/
-    public void addNew(Logger logger) {
+    public void addNew(Logger logger
+            , FieldManager fieldManager
+            , ProjectManager projectManager
+            , FieldConfigSchemeManager fieldConfigSchemeManager
+            , OptionsManager optionsManager) {
         logger.info("starting addNew method... ");
-        FieldManager fMgr = ComponentAccessor.getFieldManager();
-        logger.info("FieldManager acquired - " + fMgr);
-        ConfigurableField field = fMgr.getConfigurableField(fKey);
-        if (field != null) {
-            fName = field.getName();
-            logger.info("field " + fKey + " acquired as " + fName);
+        // what this raw use of parametrized class is bad for?
+        ConfigurableField field = fieldManager.getConfigurableField(fieldKey);
+        logger.info("field " + fieldKey + " acquired as " + field);
+        Project project = projectManager.getProjectByCurrentKeyIgnoreCase(projectKey);
+        logger.info("project " + projectKey + " acquired as " + project);
+        if ((field != null) && (project != null) && !newOption.equals("failed to acquire")) {
+            fieldName = field.getName();
+            projectName = project.getName();
         } else {
-            logger.log(Level.WARNING, "failed to acquire field " + fKey);
-        }
-        ProjectManager pMgr = ComponentAccessor.getProjectManager();
-        logger.info("ProjectManager acquired - " + pMgr);
-        Project project = pMgr.getProjectByCurrentKeyIgnoreCase(pKey);
-        if (project != null) {
-            pName = project.getName();
-            logger.info("project " + pKey + " acquired as " + pName);
-        } else {
-            logger.log(Level.WARNING, "failed to acquire  project " + pKey);
-        }
-        if (field == null || project == null || newOpt.equals("failed to acquire")) {
             logger.log(Level.WARNING, "failed to add new option");
             return;
         }
-        FieldConfigSchemeManager fcsMgr = ComponentAccessor.getFieldConfigSchemeManager();
-        if (fcsMgr != null) {
-            logger.info("FieldConfigSchemeManager acquired - " + fcsMgr);
-        } else {
-            logger.log(Level.WARNING
-                    , "failed to acquire FieldConfigSchemeManager");
-            return;
-        }
-        FieldConfigScheme fieldConfSch = fcsMgr.getRelevantConfigScheme(project, field);
-        if (fieldConfSch != null) {
-            logger.info("field Configuration Schema acquired as " + fieldConfSch);
+        // could s less check for null further with one try-catch block
+        FieldConfigScheme fieldConfigScheme = fieldConfigSchemeManager.getRelevantConfigScheme(project, field);
+        if (fieldConfigScheme != null) {
+            logger.info("field Configuration Schema acquired as " + fieldConfigScheme);
         } else {
             logger.log(Level.WARNING
                     , "FieldConfigSchemeManager fails to get Field Config Schema");
             return;
         }
-            /* potential problem here. field can have more than one and only
-            configuration in in a given project.
-            it's necessary to implement the issue type dependency
-            */
-        FieldConfig fieldConf = fieldConfSch.getOneAndOnlyConfig();
-        if (fieldConf != null) {
-            fConfName = fieldConf.getName();
-            logger.info("field configuration acquired as " + fConfName);
+        /* potential problem here. field can have more than one and only
+        configuration in in a given project.
+        it's necessary to implement the issue type dependency
+        */
+        FieldConfig fieldConfig = fieldConfigScheme.getOneAndOnlyConfig();
+        if (fieldConfig != null) {
+            fieldConfigName = fieldConfig.getName();
+            logger.info("field configuration acquired as " + fieldConfigName);
         } else {
             logger.log(Level.WARNING, "failed to acquire FieldConfig");
             return;
         }
-        OptionsManager optMgr = ComponentAccessor.getOptionsManager();
-        if (optMgr != null) {
-            logger.info("OptionsManager acquired - " + optMgr);
-        } else {
-            logger.log(Level.WARNING, "failed to acquire OptionsManager");
-            return;
-        }
-        Options fieldOptions = optMgr.getOptions(fieldConf);
+        Options fieldOptions = optionsManager.getOptions(fieldConfig);
         if (fieldOptions != null) {
             logger.info("field options acquired");
-            optList = getOptionsString(fieldOptions);
-            logger.info("field options are " + optList);
+            fieldOptionsString = getOptionsString(fieldOptions);
+            logger.info("field options are " + fieldOptionsString);
         } else {
             logger.log(Level.WARNING, "failed to acquire field options");
             return;
         }
-        logger.info("trying to add new option \"" + newOpt + "\"");
-        appendOptionToOptions(fieldConf, optMgr, fieldOptions, newOpt, logger);
-        optList = getOptionsString(optMgr.getOptions(fieldConf));
+        logger.info("trying to add new option \"" + newOption + "\"");
+        appendOptionToOptions(fieldConfig, optionsManager, fieldOptions, newOption, logger);
+        fieldOptionsString = getOptionsString(optionsManager.getOptions(fieldConfig));
     }
 
     /*********************************************************************
@@ -143,23 +122,23 @@ public class MutableOptionsList {
      * of invoking the method field instance
      ********************************************************************/
     private String getOptionsString(Options fieldOptions) {
-        StringBuilder optStr = new StringBuilder("{");
+        StringBuilder optionsString = new StringBuilder("{");
         for (Option option : fieldOptions) {
-            optStr.append("\"").append(option.getValue()).append("\", ");
+            optionsString.append("\"").append(option.getValue()).append("\", ");
         }
-        optStr.setLength(optStr.length() - 2);
-        return optStr.append("}").toString();
+        optionsString.setLength(optionsString.length() - 2);
+        return optionsString.append("}").toString();
     }
 
     /**********************************************************************
-     * @param fieldConf FieldConfig Jira Object
+     * @param fieldConfig FieldConfig Jira Object
      * @param optMgr OptionsManager Jira Object
      * @param fieldOptions Options Jira Object
      * @param newOption string - the <em>new option</em> from GET parameter
      * @param logger just the logger, initialized before invoking the
      *          constructor to keep track of what's going on
      *********************************************************************/
-    private void appendOptionToOptions(FieldConfig fieldConf, OptionsManager optMgr
+    private void appendOptionToOptions(FieldConfig fieldConfig, OptionsManager optMgr
             , Options fieldOptions, String newOption, Logger logger) {
         logger.info("checking if option already exists");
         for (Option option : fieldOptions) {
@@ -172,7 +151,7 @@ public class MutableOptionsList {
         int size = fieldOptions.getRootOptions().size();
         logger.info("there are " + size + "options in list now");
         logger.info("creating new option \"" + newOption + "\"");
-        Option newOpt = optMgr.createOption(fieldConf, null, (long) (size + 1), newOption);
+        Option newOpt = optMgr.createOption(fieldConfig, null, (long) (size + 1), newOption);
         logger.info("added option \"" + newOpt.getValue() + "\"");
     }
 }

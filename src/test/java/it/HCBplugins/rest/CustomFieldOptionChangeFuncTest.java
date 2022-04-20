@@ -1,6 +1,6 @@
 package it.HCBplugins.rest;
 
-import HCBplugins.rest.CfOptChangeModel;
+import HCBplugins.rest.PackingResponseToXML;
 import org.apache.wink.client.Resource;
 import org.apache.wink.client.RestClient;
 import org.junit.After;
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class CfOptChangeFuncTest {
+public class CustomFieldOptionChangeFuncTest {
 
     @Before
     public void setup() {
@@ -30,8 +30,8 @@ public class CfOptChangeFuncTest {
         RestClient client = new RestClient();
         Resource resource = client.resource(resourceUrl);
 
-        CfOptChangeModel message = resource.get(CfOptChangeModel.class);
+        PackingResponseToXML message = resource.get(PackingResponseToXML.class);
 
-        assertEquals("wrong message", "Hello World", message.getOptStr());
+        assertEquals("wrong message", "customfield_10000", message.getFieldKey());
     }
 }
