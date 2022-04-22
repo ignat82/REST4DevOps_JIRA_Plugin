@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 
@@ -47,20 +48,20 @@ public class CustomFieldOptionChange {
     public CustomFieldOptionChange() {
         logger = LoggerUtils
                 .createLogger(CustomFieldOptionChange.class.getName());
+        logger.info("starting acquire Managers");
         fieldManager = ComponentAccessor.getFieldManager();
-        getLogger().info("FieldManager acquired - " + getFieldManager());
+        logger.info("FieldManager acquired - " + getFieldManager());
         projectManager = ComponentAccessor.getProjectManager();
-        getLogger().info("ProjectManager acquired - " + getProjectManager());
+        logger.info("ProjectManager acquired - " + getProjectManager());
         fieldConfigSchemeManager
                 = ComponentAccessor.getFieldConfigSchemeManager();
-        getLogger().info("FieldConfigSchemeManager acquired - "
+        logger.info("FieldConfigSchemeManager acquired - "
                 + getFieldConfigSchemeManager());
         optionsManger = ComponentAccessor.getOptionsManager();
-        getLogger().info("OptionsManager acquired - " + getOptionsManger());
+        logger.info("OptionsManager acquired - " + getOptionsManger());
         // is it necessary to check if all the managers acquired properly,
         // to prevent null pointer exception in MutableOptionsList object?
     }
-
 
     // http://localhost:2990/jira/rest/cfoptchange/1.0/options?field_id=customfield_10000&proj_id=TES&new_opt=new3
 
@@ -80,20 +81,16 @@ public class CustomFieldOptionChange {
     public Response getMessage(@QueryParam("field_key") String field_key
             , @QueryParam("proj_key") String proj_key
             , @QueryParam("new_opt") String new_opt) {
-        getLogger().info("starting getMessage method...");
+        logger.info("starting getMessage method...");
         MutableOptionsList mutableOptionsList
-                = new MutableOptionsList(field_key, proj_key, new_opt, getLogger());
-        mutableOptionsList.addNew(getLogger(), getFieldManager(), getProjectManager()
+                = new MutableOptionsList(field_key, proj_key, new_opt);
+        mutableOptionsList.addNew(getFieldManager(), getProjectManager()
                 , getFieldConfigSchemeManager(), getOptionsManger());
         Response response = Response.ok(new PackingResponseToXML(mutableOptionsList)).build();
-        getLogger().info("constructed response, returning...");
+        logger.info("constructed response, returning...");
         // is it necessary to reset logger for closing the log file properly?
-        // LogManager.getLogManager().reset();
+        LogManager.getLogManager().reset();
         return response;
-    }
-
-    public Logger getLogger() {
-        return logger;
     }
 
     public FieldManager getFieldManager() {
