@@ -4,37 +4,60 @@ import java.io.IOException;
 import java.util.logging.*;
 
 public class LoggerUtils {
+    private final String logFileName;
+    private static Logger oneAndOnlyLogger;
+
     /**************************************************************************
-     * method initialises new logger, adds new console and file handlers to it
-     * sets the log level to all and changes the system property of log format
-     * log string will look like
-     * Apr 14, 2022 5:08:49 PM HCBplugins.rest.CfOptChange settingLogger
-     * INFO: starting log....
-     * @return logger instance with console and file handler added to it
+     * constructor sets the system property defining how log messages will
+     * look like and takes the log file path from invoking class
+     * @param loggerName - name of the logger instance to be created
+     * @param logFileName - full path to log file
      *************************************************************************/
-    public static Logger createLogger(String className) {
+    LoggerUtils(String loggerName, String logFileName) {
         System.setProperty(
                 "java.util.logging.SimpleFormatter.format",
                 "%4$s %2$s: %5$s%6$s%n");
-        Logger newLogger = Logger.getLogger(className);
-        newLogger.setUseParentHandlers(false);
-        Handler conHandler = new ConsoleHandler();
-        conHandler.setLevel(Level.ALL);
-        newLogger.addHandler(conHandler);
-        newLogger.info("created logger. initialized console handler");
+        this.logFileName = logFileName;
+        initializeLogger(loggerName);
+    }
+
+    /**************************************************************************
+     * method initialises new logger, adds new console and file handlers to it
+     * sets the log level to ALL. Log string will look like
+     * Apr 29, 2022 5:39:14 PM HCBplugins.rest.LoggerUtils initializeLogger
+     * INFO: created logger REST4DevopsLogger... initialized console handler
+     *************************************************************************/
+    private void initializeLogger(String loggerName) {
+        oneAndOnlyLogger = Logger.getLogger(loggerName);
+        oneAndOnlyLogger.setUseParentHandlers(false);
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.ALL);
+        oneAndOnlyLogger.addHandler(consoleHandler);
+        oneAndOnlyLogger.info("created logger " + loggerName + "... initialized console handler");
         try {
-            Handler fileHandler = new FileHandler("C:\\Users\\digit\\Documents" +
-                    "\\JAVA\\Plugin\\REST4DevOps\\log.log", true);
+            FileHandler fileHandler = new FileHandler(logFileName, true);
             fileHandler.setLevel(Level.ALL);
             fileHandler.setFormatter(new SimpleFormatter());
-            newLogger.addHandler(fileHandler);
-            newLogger.info("logger fileHandler creation success");
+            oneAndOnlyLogger.addHandler(fileHandler);
+            oneAndOnlyLogger.info("logger fileHandler creation success");
         } catch (SecurityException | IOException e) {
             e.printStackTrace();
-            newLogger.warning("logger fileHandler creation failure");
+            oneAndOnlyLogger.info("failed to open log file for writing....");
         }
+        oneAndOnlyLogger.info("started log....");
+    }
 
-        newLogger.info("started log....");
-        return newLogger;
+    public static Logger getLogger() {
+        return oneAndOnlyLogger;
+    }
+
+    /**************************************************************************
+     * method for closing the og file. should be called at the end of invoking
+     * method
+     *************************************************************************/
+    public void closeLogFiles() {
+        for (Handler handler : oneAndOnlyLogger.getHandlers()) {
+            handler.close();
+        }
     }
 }

@@ -13,14 +13,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.logging.LogManager;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 /******************************************************************************
  * The core class that does following:
  *  when constructed:
- *  - initialises logger,
+ *  - initialises LoggerUtilsObject ang gets logger from it,
  *  - acquires jira object managers,
  *  afterwards, every time when receives get request:
  *      - invokes constructor of MutableOptionsList object
@@ -29,25 +29,27 @@ import java.util.logging.Logger;
  *      - returns the response.
  * the full path to API endpoint(?) looks like:
  * http://{hostname}/jira/rest/cfoptchange/1.0/options?field_key={jira field key}&proj_key={jira project key}&new_opt={new option}
+ * http://localhost:2990/jira/rest/cfoptchange/1.0/options?field_id=customfield_10000&proj_id=TES&new_opt=new3
  *****************************************************************************/
 @Path("/options")
 public class CustomFieldOptionChange {
 
+    private final LoggerUtils loggerUtils;
     private final Logger logger;
     private final FieldManager fieldManager;
     private final ProjectManager projectManager;
     private final FieldConfigSchemeManager fieldConfigSchemeManager;
     private final OptionsManager optionsManger;
 
+
     /**************************************************************************
-     * constructor initialises logger and receives Jira objects manager trough
+     * constructor initialises logger and receives Jira objects managers trough
      * component accessor
-     * is it necessary to use "this." if constructor does not receives any
-     * parameters?
      *************************************************************************/
     public CustomFieldOptionChange() {
-        logger = LoggerUtils
-                .createLogger(CustomFieldOptionChange.class.getName());
+        loggerUtils = new LoggerUtils("REST4DevopsLogger"
+                , "C:\\Users\\digit\\Documents\\JAVA\\Plugin\\REST4DevOps\\log.log");
+        logger = LoggerUtils.getLogger();
         logger.info("starting acquire Managers");
         fieldManager = ComponentAccessor.getFieldManager();
         logger.info("FieldManager acquired - " + getFieldManager());
@@ -59,17 +61,21 @@ public class CustomFieldOptionChange {
                 + getFieldConfigSchemeManager());
         optionsManger = ComponentAccessor.getOptionsManager();
         logger.info("OptionsManager acquired - " + getOptionsManger());
-        // is it necessary to check if all the managers acquired properly,
-        // to prevent null pointer exception in MutableOptionsList object?
+        if ((fieldManager == null) || (projectManager == null)
+                || (fieldConfigSchemeManager == null) || (optionsManger == null)) {
+            String errorMessage = "mangers have not been acquired properly. " +
+                    "shutting down CustomFieldOptionsChange constructor";
+            logger.log(Level.SEVERE, errorMessage);
+            throw new RuntimeException(errorMessage);
+        }
     }
 
-    // http://localhost:2990/jira/rest/cfoptchange/1.0/options?field_id=customfield_10000&proj_id=TES&new_opt=new3
 
     /**************************************************************************
      * the core method which receives the GET parameters,
-     * initialises the logger, creates new instance of MutableOptionsList
-     * nested class, invokes the .addNew() method and constructs the response
-     * with CfOptChangeModel class constructor
+     * creates new instance of MutableOptionsList nested class, invokes the
+     * .addNew() method of it and constructs the response with
+     * PackingResponseToXML class constructor
      * @param field_key the <em>key</em> of the <em>customfield</em> from GET parameter
      * @param proj_key the <em>key</em> of the <em>project</em> from GET parameter
      * @param new_opt  string - the <em>new option</em> from GET parameter
@@ -89,7 +95,8 @@ public class CustomFieldOptionChange {
         Response response = Response.ok(new PackingResponseToXML(mutableOptionsList)).build();
         logger.info("constructed response, returning...");
         // is it necessary to reset logger for closing the log file properly?
-        LogManager.getLogManager().reset();
+        logger.info("closing logger's " + logger.getName() + " handlers");
+        loggerUtils.closeLogFiles();
         return response;
     }
 

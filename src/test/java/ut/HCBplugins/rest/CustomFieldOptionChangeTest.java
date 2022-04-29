@@ -1,13 +1,8 @@
 package ut.HCBplugins.rest;
 
-import com.atlassian.jira.issue.customfields.manager.OptionsManager;
-import com.atlassian.jira.issue.fields.FieldManager;
-import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
-import com.atlassian.jira.project.ProjectManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,6 +25,7 @@ public class CustomFieldOptionChangeTest {
 
     }
 
+    /*
     @Mock
     private FieldManager fieldManager;
     @Mock
@@ -38,7 +34,7 @@ public class CustomFieldOptionChangeTest {
     private FieldConfigSchemeManager fieldConfigSchemeManager;
     @Mock
     private OptionsManager optionsManger;
-
+    */
     @Test
     public void messageIsValid() {
         /*

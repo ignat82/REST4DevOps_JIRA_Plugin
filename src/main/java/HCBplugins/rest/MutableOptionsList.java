@@ -38,8 +38,7 @@ public class MutableOptionsList {
      * @param newOption new option content from GET parameter
      *********************************************************************/
     MutableOptionsList(String fieldKey, String projectKey, String newOption) {
-        this.logger = LoggerUtils
-                .createLogger(CustomFieldOptionChange.class.getName());
+        logger = LoggerUtils.getLogger();
         logger.info("starting constructor... field and project keys " +
                 "received are " + fieldKey + "; " + projectKey +
                 "; new option received is " + newOption);
@@ -71,18 +70,17 @@ public class MutableOptionsList {
             , OptionsManager optionsManager) {
         logger.info("starting addNew method... ");
         // what this raw use of parametrized class is bad for?
-        ConfigurableField field = fieldManager.getConfigurableField(getFieldKey());
-        logger.info("field " + getFieldKey() + " acquired as " + field);
-        Project project = projectManager.getProjectByCurrentKeyIgnoreCase(getProjectKey());
-        logger.info("project " + getProjectKey() + " acquired as " + project);
+        ConfigurableField field = fieldManager.getConfigurableField(fieldKey);
+        logger.info("field " + fieldKey + " acquired as " + field);
+        Project project = projectManager.getProjectByCurrentKeyIgnoreCase(projectKey);
+        logger.info("project " + projectKey + " acquired as " + project);
         if ((field != null) && (project != null) && !getNewOption().equals("failed to acquire")) {
             fieldName = field.getName();
             projectName = project.getName();
         } else {
-            logger.log(Level.WARNING, "failed to add new option");
+            logger.log(Level.WARNING, "failed to add new option due wrong parameters received");
             return;
         }
-        // could s less check for null further with one try-catch block
         FieldConfigScheme fieldConfigScheme = fieldConfigSchemeManager.getRelevantConfigScheme(project, field);
         if (fieldConfigScheme != null) {
             logger.info("field Configuration Schema acquired as " + fieldConfigScheme);
@@ -98,7 +96,7 @@ public class MutableOptionsList {
         FieldConfig fieldConfig = fieldConfigScheme.getOneAndOnlyConfig();
         if (fieldConfig != null) {
             fieldConfigName = fieldConfig.getName();
-            logger.info("field configuration acquired as " + getFieldConfigName());
+            logger.info("field configuration acquired as " + fieldConfigName);
         } else {
             logger.log(Level.WARNING, "failed to acquire FieldConfig");
             return;
@@ -107,13 +105,13 @@ public class MutableOptionsList {
         if (fieldOptions != null) {
             logger.info("field options acquired");
             fieldOptionsString = getOptionsString(fieldOptions);
-            logger.info("field options are " + getFieldOptionsString());
+            logger.info("field options are " + fieldOptionsString);
         } else {
             logger.log(Level.WARNING, "failed to acquire field options");
             return;
         }
-        logger.info("trying to add new option \"" + getNewOption() + "\"");
-        appendOptionToOptions(fieldConfig, optionsManager, fieldOptions, getNewOption());
+        logger.info("trying to add new option \"" + newOption + "\"");
+        appendOptionToOptions(fieldConfig, optionsManager, fieldOptions, newOption);
         fieldOptionsString = getOptionsString(optionsManager.getOptions(fieldConfig));
     }
 
@@ -148,6 +146,7 @@ public class MutableOptionsList {
             }
         }
         logger.info("... it doesn't");
+        // getOptions or getRootOptions ?
         int size = fieldOptions.getRootOptions().size();
         logger.info("there are " + size + "options in list now");
         logger.info("creating new option \"" + newOption + "\"");
