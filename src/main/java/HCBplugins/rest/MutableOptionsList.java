@@ -11,6 +11,7 @@ import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,11 +23,11 @@ import java.util.logging.Logger;
  **************************************************************************/
 public class MutableOptionsList {
     private final Logger logger;
-    private String fieldKey = "not provided";
-    private String projectKey = "not provided";
-    private String newOption = "not provided";
-    private String fieldName = "not provided";
-    private String projectName = "not provided";
+    private final String fieldKey;
+    private final String projectKey;
+    private String newOption;
+    private String fieldName = "failed to acquire";
+    private String projectName = "failed to acquire";
     private String fieldConfigName = "failed to acquire";
     private String fieldOptionsString = "failed to acquire";
 
@@ -39,18 +40,11 @@ public class MutableOptionsList {
      *********************************************************************/
     MutableOptionsList(String fieldKey, String projectKey, String newOption) {
         logger = LoggerUtils.getLogger();
-        logger.info("starting constructor... field and project keys " +
-                "received are " + fieldKey + "; " + projectKey +
-                "; new option received is " + newOption);
-        if (fieldKey != null) {
-            this.fieldKey = fieldKey;
-        }
-        if (projectKey != null) {
-            this.projectKey = projectKey;
-        }
-        if (newOption != null) {
-            this.newOption = newOption;
-        }
+        logger.info("starting constructor... field and project keys " + "received are " + fieldKey
+                + "; " + projectKey + "; new option received is " + newOption);
+        this.fieldKey = fieldKey;
+        this.projectKey = projectKey;
+        this.newOption = newOption;
     }
 
     /*************************************************************************
@@ -68,51 +62,54 @@ public class MutableOptionsList {
             , ProjectManager projectManager
             , FieldConfigSchemeManager fieldConfigSchemeManager
             , OptionsManager optionsManager) {
-        logger.info("starting addNew method... ");
         // what this raw use of parametrized class is bad for?
-        ConfigurableField field = fieldManager.getConfigurableField(fieldKey);
-        logger.info("field " + fieldKey + " acquired as " + field);
-        Project project = projectManager.getProjectByCurrentKeyIgnoreCase(projectKey);
-        logger.info("project " + projectKey + " acquired as " + project);
-        if ((field != null) && (project != null) && !getNewOption().equals("failed to acquire")) {
+        ConfigurableField field;
+        Project project;
+        FieldConfigScheme fieldConfigScheme;
+        FieldConfig fieldConfig;
+        Options fieldOptions;
+        logger.info("starting addNew method... ");
+        try {
+            field = Objects.requireNonNull(fieldManager.getConfigurableField(fieldKey)
+                    , "failed to acquire field " + fieldKey);
             fieldName = field.getName();
+            logger.info("field " + fieldKey + " acquired as " + field);
+            project = Objects.requireNonNull(projectManager.getProjectByCurrentKeyIgnoreCase(projectKey)
+                    , "failed to acquire project " + projectKey);
             projectName = project.getName();
-        } else {
-            logger.log(Level.WARNING, "failed to add new option due wrong parameters received");
-            return;
-        }
-        FieldConfigScheme fieldConfigScheme = fieldConfigSchemeManager.getRelevantConfigScheme(project, field);
-        if (fieldConfigScheme != null) {
-            logger.info("field Configuration Schema acquired as " + fieldConfigScheme);
-        } else {
-            logger.log(Level.WARNING
+            logger.info("project " + projectKey + " acquired as " + project);
+            fieldConfigScheme = Objects.requireNonNull(fieldConfigSchemeManager.getRelevantConfigScheme(project, field)
                     , "FieldConfigSchemeManager fails to get Field Config Schema");
-            return;
-        }
-        /* potential problem here. field can have more than one and only
-        configuration in in a given project.
-        it's necessary to implement the issue type dependency
-        */
-        FieldConfig fieldConfig = fieldConfigScheme.getOneAndOnlyConfig();
-        if (fieldConfig != null) {
+            logger.info("field Configuration Schema acquired as " + fieldConfigScheme);
+            /*
+            potential problem here. field can have more than one and only
+            configuration in in a given project.
+            it's necessary to implement the issue type dependency
+            */
+            fieldConfig = Objects.requireNonNull(fieldConfigScheme.getOneAndOnlyConfig()
+                    , "failed to acquire FieldConfig");
             fieldConfigName = fieldConfig.getName();
             logger.info("field configuration acquired as " + fieldConfigName);
-        } else {
-            logger.log(Level.WARNING, "failed to acquire FieldConfig");
-            return;
-        }
-        Options fieldOptions = optionsManager.getOptions(fieldConfig);
-        if (fieldOptions != null) {
+            fieldOptions = Objects.requireNonNull(optionsManager.getOptions(fieldConfig)
+                    , "failed to acquire field options");
             logger.info("field options acquired");
             fieldOptionsString = getOptionsString(fieldOptions);
             logger.info("field options are " + fieldOptionsString);
-        } else {
-            logger.log(Level.WARNING, "failed to acquire field options");
+        } catch (Exception exception) {
+            logger.log(Level.WARNING, exception.getMessage());
+            logger.log(Level.WARNING, "shutting down addNew method");
             return;
         }
-        logger.info("trying to add new option \"" + newOption + "\"");
-        appendOptionToOptions(fieldConfig, optionsManager, fieldOptions, newOption);
-        fieldOptionsString = getOptionsString(optionsManager.getOptions(fieldConfig));
+
+        if (newOption != null) {
+            logger.info("trying to add new option \"" + newOption + "\"");
+            appendOptionToOptions(fieldConfig, optionsManager, fieldOptions, newOption);
+            fieldOptionsString = getOptionsString(optionsManager.getOptions(fieldConfig));
+        } else {
+            newOption = "not provided";
+            logger.log(Level.WARNING, "failed to add new option due its not provided in GET request");
+            logger.log(Level.WARNING, "shutting down addNew method");
+        }
     }
 
     /*********************************************************************

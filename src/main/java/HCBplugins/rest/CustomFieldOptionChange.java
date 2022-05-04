@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
  *      - returns the response.
  * the full path to API endpoint(?) looks like:
  * http://{hostname}/jira/rest/cfoptchange/1.0/options?field_key={jira field key}&proj_key={jira project key}&new_opt={new option}
- * http://localhost:2990/jira/rest/cfoptchange/1.0/options?field_id=customfield_10000&proj_id=TES&new_opt=new3
+ * http://localhost:2990/jira/rest/cfoptchange/1.0/options?field_key=customfield_10000&proj_key=TES&new_opt=new3
  *****************************************************************************/
 @Path("/options")
 public class CustomFieldOptionChange {
@@ -50,23 +51,21 @@ public class CustomFieldOptionChange {
         loggerUtils = new LoggerUtils("REST4DevopsLogger"
                 , "C:\\Users\\digit\\Documents\\JAVA\\Plugin\\REST4DevOps\\log.log");
         logger = LoggerUtils.getLogger();
-        logger.info("starting acquire Managers");
-        fieldManager = ComponentAccessor.getFieldManager();
-        logger.info("FieldManager acquired - " + getFieldManager());
-        projectManager = ComponentAccessor.getProjectManager();
-        logger.info("ProjectManager acquired - " + getProjectManager());
-        fieldConfigSchemeManager
-                = ComponentAccessor.getFieldConfigSchemeManager();
-        logger.info("FieldConfigSchemeManager acquired - "
-                + getFieldConfigSchemeManager());
-        optionsManger = ComponentAccessor.getOptionsManager();
-        logger.info("OptionsManager acquired - " + getOptionsManger());
-        if ((fieldManager == null) || (projectManager == null)
-                || (fieldConfigSchemeManager == null) || (optionsManger == null)) {
-            String errorMessage = "mangers have not been acquired properly. " +
-                    "shutting down CustomFieldOptionsChange constructor";
-            logger.log(Level.SEVERE, errorMessage);
-            throw new RuntimeException(errorMessage);
+        logger.info("starting CustomFieldOptionChange instance construction");
+        try {
+            fieldManager = Objects.requireNonNull(ComponentAccessor.getFieldManager()
+                    , "failed to acquire fieldManager trough ComponentAccessor");
+            projectManager = Objects.requireNonNull(ComponentAccessor.getProjectManager()
+                    , "failed to acquire projectManager trough ComponentAccessor");
+            fieldConfigSchemeManager = Objects.requireNonNull(ComponentAccessor.getFieldConfigSchemeManager()
+                    , "failed to acquire fieldConfigSchemeManager trough ComponentAccessor");
+            optionsManger = Objects.requireNonNull(ComponentAccessor.getOptionsManager()
+                    , "failed to acquire optionsManger trough ComponentAccessor");
+            logger.info("all managers acquired successfully. instance constructed");
+        } catch (Exception exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            loggerUtils.closeLogFiles();
+            throw exception;
         }
     }
 
