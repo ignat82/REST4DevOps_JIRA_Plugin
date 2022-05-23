@@ -4,21 +4,20 @@ import java.io.IOException;
 import java.util.logging.*;
 
 public class LoggerUtils {
-    private final String logFileName;
+    // private final String logFileName;
     private static Logger oneAndOnlyLogger;
+    private final String logFilePath = "C:\\Users\\digit\\Documents\\JAVA\\Plugin\\REST4DevOps\\log.log";
+    private final String loggerName = "REST4DevopsLogger";
 
     /**************************************************************************
      * constructor sets the system property defining how log messages will
-     * look like and takes the log file path from invoking class
-     * @param loggerName - name of the logger instance to be created
-     * @param logFileName - full path to log file
+     * look like and invokes logger creation method
      *************************************************************************/
-    LoggerUtils(String loggerName, String logFileName) {
+    LoggerUtils() {
         System.setProperty(
                 "java.util.logging.SimpleFormatter.format",
                 "%4$s %2$s: %5$s%6$s%n");
-        this.logFileName = logFileName;
-        initializeLogger(loggerName);
+        oneAndOnlyLogger = createLogger();
     }
 
     /**************************************************************************
@@ -27,24 +26,25 @@ public class LoggerUtils {
      * Apr 29, 2022 5:39:14 PM HCBplugins.rest.LoggerUtils initializeLogger
      * INFO: created logger REST4DevopsLogger... initialized console handler
      *************************************************************************/
-    private void initializeLogger(String loggerName) {
-        oneAndOnlyLogger = Logger.getLogger(loggerName);
-        oneAndOnlyLogger.setUseParentHandlers(false);
+    private Logger createLogger() {
+        Logger logger = Logger.getLogger(loggerName);
+        logger.setUseParentHandlers(false);
         ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(Level.ALL);
-        oneAndOnlyLogger.addHandler(consoleHandler);
-        oneAndOnlyLogger.info("created logger " + loggerName + "... initialized console handler");
+        logger.addHandler(consoleHandler);
+        logger.info("created logger " + loggerName + "... initialized console handler");
         try {
-            FileHandler fileHandler = new FileHandler(logFileName, true);
+            FileHandler fileHandler = new FileHandler(logFilePath, true);
             fileHandler.setLevel(Level.ALL);
             fileHandler.setFormatter(new SimpleFormatter());
-            oneAndOnlyLogger.addHandler(fileHandler);
-            oneAndOnlyLogger.info("logger fileHandler creation success");
+            logger.addHandler(fileHandler);
+            logger.info("logger fileHandler creation success");
         } catch (SecurityException | IOException e) {
             e.printStackTrace();
-            oneAndOnlyLogger.info("failed to open log file for writing....");
+            logger.info("failed to open log file for writing....");
         }
-        oneAndOnlyLogger.info("started log....");
+        logger.info("started log....");
+        return logger;
     }
 
     public static Logger getLogger() {

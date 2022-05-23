@@ -35,7 +35,6 @@ import java.util.logging.Logger;
 @Path("/options")
 public class CustomFieldOptionChange {
 
-    private final LoggerUtils loggerUtils;
     private final Logger logger;
     private final FieldManager fieldManager;
     private final ProjectManager projectManager;
@@ -48,8 +47,6 @@ public class CustomFieldOptionChange {
      * component accessor
      *************************************************************************/
     public CustomFieldOptionChange() {
-        loggerUtils = new LoggerUtils("REST4DevopsLogger"
-                , "C:\\Users\\digit\\Documents\\JAVA\\Plugin\\REST4DevOps\\log.log");
         logger = LoggerUtils.getLogger();
         logger.info("starting CustomFieldOptionChange instance construction");
         try {
