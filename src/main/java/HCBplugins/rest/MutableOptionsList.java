@@ -11,6 +11,7 @@ import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +31,7 @@ public class MutableOptionsList {
     private String projectName = "failed to acquire";
     private String fieldConfigName = "failed to acquire";
     private String fieldOptionsString = "failed to acquire";
+    private String[] fieldOptionsArr;
     private boolean result = false;
 
     /**********************************************************************
@@ -59,16 +61,17 @@ public class MutableOptionsList {
      *                                 schemas
      * @param optionsManager jira object to manipulate field options
      ************************************************************************/
-    public void addNew(FieldManager fieldManager
-            , ProjectManager projectManager
-            , FieldConfigSchemeManager fieldConfigSchemeManager
-            , OptionsManager optionsManager) {
+    public void addNew(FieldManager fieldManager,
+                       ProjectManager projectManager,
+                       FieldConfigSchemeManager fieldConfigSchemeManager,
+                       OptionsManager optionsManager) {
         // what this raw use of parametrized class is bad for?
         ConfigurableField field;
         Project project;
         FieldConfigScheme fieldConfigScheme;
         FieldConfig fieldConfig;
         Options fieldOptions;
+
         logger.info("starting addNew method... ");
         try {
             field = Objects.requireNonNull(fieldManager.getConfigurableField(fieldKey)
@@ -96,6 +99,7 @@ public class MutableOptionsList {
             logger.info("field options acquired");
             fieldOptionsString = getOptionsString(fieldOptions);
             logger.info("field options are " + fieldOptionsString);
+            fieldOptionsArr = getOptionsArr(fieldOptions);
         } catch (Exception exception) {
             logger.log(Level.WARNING, exception.getMessage());
             logger.log(Level.WARNING, "shutting down addNew method");
@@ -105,7 +109,11 @@ public class MutableOptionsList {
         if ((newOption != null) && (!newOption.equals(""))) {
             logger.info("trying to add new option \"" + newOption + "\"");
             appendOptionToOptions(fieldConfig, optionsManager, fieldOptions, newOption);
+            /* acquiring Options object and Options from it once again, cuz the
+            new one was appended */
+            fieldOptions = (optionsManager.getOptions(fieldConfig));
             fieldOptionsString = getOptionsString(optionsManager.getOptions(fieldConfig));
+            fieldOptionsArr = getOptionsArr(fieldOptions);
         } else {
             newOption = "not provided";
             logger.log(Level.WARNING, "failed to add new option due its not provided in GET request");
@@ -113,12 +121,13 @@ public class MutableOptionsList {
         }
     }
 
-    /*********************************************************************
-     * method returns the list of options of customfield in a String representation
-     * @param fieldOptions Options Jira Object
-     * @return <em>{"option_1", ... , "option_n"}</em> the string of options
-     * of invoking the method field instance
-     ********************************************************************/
+    /**
+     method returns the list of options from Options object in a single
+     comma separated String representation
+     @param fieldOptions Options Jira Object
+     @return <em>{"option_1", ... , "option_n"}</em> the string of options
+     of invoking the method field instance
+     */
     private String getOptionsString(Options fieldOptions) {
         StringBuilder optionsString = new StringBuilder("{");
         for (Option option : fieldOptions) {
@@ -126,6 +135,21 @@ public class MutableOptionsList {
         }
         optionsString.setLength(optionsString.length() - 2);
         return optionsString.append("}").toString();
+    }
+
+    /**
+     method returns the array of String with options, containing in fieldOptions
+     parameter
+     @param fieldOptions Options Jira Object
+     @return <em>["option_1", ... , "option_n"]</em> array of Strings
+     */
+    private String[] getOptionsArr(Options fieldOptions) {
+        String[] fieldOptionsArr = new String[fieldOptions.size()];
+        int i = 0;
+        for (Option option : fieldOptions) {
+            fieldOptionsArr[i++] = option.getValue();
+        }
+        return fieldOptionsArr;
     }
 
     /**********************************************************************
@@ -137,16 +161,14 @@ public class MutableOptionsList {
     private void appendOptionToOptions(FieldConfig fieldConfig, OptionsManager optMgr
             , Options fieldOptions, String newOption) {
         logger.info("checking if option already exists");
-        for (Option option : fieldOptions) {
-            if (option.getValue().equals(newOption)) {
-                logger.warning("new option \"" + newOption + "\" already exist");
-                return;
-            }
+        if (Arrays.asList(fieldOptionsArr).contains(newOption)) {
+            logger.warning("new option \"" + newOption + "\" already exist");
+            return;
         }
         logger.info("... it doesn't");
         // getOptions or getRootOptions ?
         int size = fieldOptions.getRootOptions().size();
-        logger.info("there are " + size + "options in list now");
+        logger.info("there are " + size + " options in list now");
         logger.info("creating new option \"" + newOption + "\"");
         Option newOpt = optMgr.createOption(fieldConfig, null, (long) (size + 1), newOption);
         logger.info("added option \"" + newOpt.getValue() + "\"");
@@ -183,5 +205,9 @@ public class MutableOptionsList {
 
     public Boolean getResult() {
         return result;
+    }
+
+    public String[] getFieldOptionsArr() {
+        return Arrays.copyOf(fieldOptionsArr, fieldOptionsArr.length);
     }
 }

@@ -30,16 +30,16 @@ import java.util.logging.Logger;
  *      - returns the response.
  * the full path to API endpoint(?) looks like:
  * http://{hostname}/jira/rest/cfoptchange/1.0/options?field_key={jira field key}&proj_key={jira project key}&new_opt={new option}
- * http://localhost:2990/jira/rest/cfoptchange/1.0/options6540&?field_key=customfield_10000&proj_key=TES&new_opt=new3
+ * http://localhost:2990/jira/rest/cfoptchange/1.0/options&?field_key=customfield_10000&proj_key=TES&new_opt=new3
  *****************************************************************************/
 @Path("/options")
 public class CustomFieldOptionChange {
 
-    private final Logger logger;
-    private final FieldManager fieldManager;
-    private final ProjectManager projectManager;
-    private final FieldConfigSchemeManager fieldConfigSchemeManager;
-    private final OptionsManager optionsManger;
+    private final Logger                    logger;
+    private final FieldManager              fieldManager;
+    private final ProjectManager            projectManager;
+    private final FieldConfigSchemeManager  fieldConfigSchemeManager;
+    private final OptionsManager            optionsManger;
 
 
     /**************************************************************************
@@ -47,7 +47,7 @@ public class CustomFieldOptionChange {
      * component accessor
      *************************************************************************/
     public CustomFieldOptionChange() {
-        LoggerUtils loggerUtils = new LoggerUtils();
+        new LoggerUtils();
         logger = LoggerUtils.getLogger();
         logger.info("starting CustomFieldOptionChange instance construction");
         try {
@@ -81,15 +81,18 @@ public class CustomFieldOptionChange {
     @GET
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getResponse(@QueryParam("field_key") String field_key
-            , @QueryParam("proj_key") String proj_key
-            , @QueryParam("new_opt") String new_opt) {
+    public Response getResponse(@QueryParam("field_key") String field_key,
+                                @QueryParam("proj_key") String proj_key,
+                                @QueryParam("new_opt") String new_opt) {
         logger.info("starting getResponse method...");
         MutableOptionsList mutableOptionsList
                 = new MutableOptionsList(field_key, proj_key, new_opt);
-        mutableOptionsList.addNew(getFieldManager(), getProjectManager()
-                , getFieldConfigSchemeManager(), getOptionsManger());
-        Response response = Response.ok(new PackingResponseToXML(mutableOptionsList)).build();
+        mutableOptionsList.addNew(  getFieldManager(),
+                                    getProjectManager(),
+                                    getFieldConfigSchemeManager(),
+                                    getOptionsManger());
+        Response response = Response.ok(
+                new PackingResponseToXML(mutableOptionsList)).build();
         logger.info("constructed response, returning...");
         // is it necessary to reset logger for closing the log file properly?
         logger.info("closing logger's " + logger.getName() + " handlers");

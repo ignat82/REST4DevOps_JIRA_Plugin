@@ -6,7 +6,8 @@ import java.util.logging.*;
 public class LoggerUtils {
     // private final String logFileName;
     private static Logger oneAndOnlyLogger;
-    private final String logFilePath = "C:\\Users\\digit\\Documents\\JAVA\\Plugin\\REST4DevOps\\log.log";
+    private final String logFilePath =
+            "C:\\Users\\digit\\Documents\\JAVA\\Plugin\\REST4DevOps\\log.log";
     private final String loggerName = "REST4DevopsLogger";
 
     /**************************************************************************
@@ -32,7 +33,8 @@ public class LoggerUtils {
         ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(Level.ALL);
         logger.addHandler(consoleHandler);
-        logger.info("created logger " + loggerName + "... initialized console handler");
+        logger.info("created logger " + loggerName +
+                "... initialized console handler");
         try {
             FileHandler fileHandler = new FileHandler(logFilePath, true);
             fileHandler.setLevel(Level.ALL);

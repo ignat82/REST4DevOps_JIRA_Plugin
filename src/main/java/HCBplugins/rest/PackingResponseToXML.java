@@ -1,6 +1,7 @@
 package HCBplugins.rest;
 
 import javax.xml.bind.annotation.*;
+import java.util.Arrays;
 
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,10 +19,9 @@ public class PackingResponseToXML {
     private String projectName;
     @XmlElement(name = "fieldConfigName")
     private String fieldConfigName;
-    @XmlElementWrapper(name = "fieldOptionsString")
+    @XmlElementWrapper(name = "fieldOptions")
     @XmlElement(name = "option")
-    private String[] options;
-    private String fieldOptionsString;
+    private String[] fieldOptions;
     @XmlElement(name = "result")
     private String result;
 
@@ -34,7 +34,8 @@ public class PackingResponseToXML {
         projectName = mutableOptionsList.getProjectName();
         fieldConfigName = mutableOptionsList.getFieldConfigName();
         newOption = mutableOptionsList.getNewOption();
-        fieldOptionsString = mutableOptionsList.getFieldOptionsString();
+        // fieldOptionsString = mutableOptionsList.getFieldOptionsString();
+        fieldOptions = mutableOptionsList.getFieldOptionsArr();
         fieldKey = mutableOptionsList.getFieldKey();
         projectKey = mutableOptionsList.getProjectKey();
         result = Boolean.toString(mutableOptionsList.getResult());
@@ -65,8 +66,8 @@ public class PackingResponseToXML {
         return fieldConfigName;
     }
 
-    public String getFieldOptionsString() {
-        return fieldOptionsString;
+    public String[] getFieldOptions() {
+        return Arrays.copyOf(fieldOptions, fieldOptions.length);
     }
 
     public String getResult() {
