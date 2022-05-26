@@ -55,7 +55,7 @@ public class LoggerUtils {
      * method for closing the og file. should be called at the end of invoking
      * method
      *************************************************************************/
-    public void closeLogFiles() {
+    public static void closeLogFiles() {
         for (Handler handler : oneAndOnlyLogger.getHandlers()) {
             handler.close();
         }

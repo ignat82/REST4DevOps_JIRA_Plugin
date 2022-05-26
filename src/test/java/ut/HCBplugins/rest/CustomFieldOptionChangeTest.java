@@ -40,7 +40,7 @@ public class CustomFieldOptionChangeTest {
         /*
         CustomFieldOptionChange resource = new CustomFieldOptionChange();
 
-        Response response = resource.getMessage("customfield_10000"
+        Response response = resource.getResponse("customfield_10000"
                 , "TES", "new10");
         final PackingResponseToXML XMLResponse = (PackingResponseToXML) response.getEntity();
 

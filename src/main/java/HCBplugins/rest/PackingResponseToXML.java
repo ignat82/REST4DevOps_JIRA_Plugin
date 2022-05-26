@@ -18,21 +18,27 @@ public class PackingResponseToXML {
     private String projectName;
     @XmlElement(name = "fieldConfigName")
     private String fieldConfigName;
-    @XmlElement(name = "fieldOptionsString")
+    @XmlElementWrapper(name = "fieldOptionsString")
+    @XmlElement(name = "option")
+    private String[] options;
     private String fieldOptionsString;
+    @XmlElement(name = "result")
+    private String result;
 
 
     public PackingResponseToXML() {
     }
 
     public PackingResponseToXML(MutableOptionsList mutableOptionsList) {
-        this.fieldName = mutableOptionsList.getFieldName();
-        this.projectName = mutableOptionsList.getProjectName();
-        this.fieldConfigName = mutableOptionsList.getFieldConfigName();
-        this.newOption = mutableOptionsList.getNewOption();
-        this.fieldOptionsString = mutableOptionsList.getFieldOptionsString();
-        this.fieldKey = mutableOptionsList.getFieldKey();
-        this.projectKey = mutableOptionsList.getProjectKey();
+        fieldName = mutableOptionsList.getFieldName();
+        projectName = mutableOptionsList.getProjectName();
+        fieldConfigName = mutableOptionsList.getFieldConfigName();
+        newOption = mutableOptionsList.getNewOption();
+        fieldOptionsString = mutableOptionsList.getFieldOptionsString();
+        fieldKey = mutableOptionsList.getFieldKey();
+        projectKey = mutableOptionsList.getProjectKey();
+        result = Boolean.toString(mutableOptionsList.getResult());
+
     }
 
     public String getFieldKey() {
@@ -63,4 +69,7 @@ public class PackingResponseToXML {
         return fieldOptionsString;
     }
 
+    public String getResult() {
+        return result;
+    }
 }

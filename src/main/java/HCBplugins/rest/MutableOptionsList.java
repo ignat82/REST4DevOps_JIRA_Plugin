@@ -30,6 +30,7 @@ public class MutableOptionsList {
     private String projectName = "failed to acquire";
     private String fieldConfigName = "failed to acquire";
     private String fieldOptionsString = "failed to acquire";
+    private boolean result = false;
 
     /**********************************************************************
      * constructor just puts the field_key, project_key and new_option
@@ -101,7 +102,7 @@ public class MutableOptionsList {
             return;
         }
 
-        if (newOption != null) {
+        if ((newOption != null) && (!newOption.equals(""))) {
             logger.info("trying to add new option \"" + newOption + "\"");
             appendOptionToOptions(fieldConfig, optionsManager, fieldOptions, newOption);
             fieldOptionsString = getOptionsString(optionsManager.getOptions(fieldConfig));
@@ -149,6 +150,7 @@ public class MutableOptionsList {
         logger.info("creating new option \"" + newOption + "\"");
         Option newOpt = optMgr.createOption(fieldConfig, null, (long) (size + 1), newOption);
         logger.info("added option \"" + newOpt.getValue() + "\"");
+        result = true;
     }
 
     public String getFieldKey() {
@@ -177,5 +179,9 @@ public class MutableOptionsList {
 
     public String getFieldOptionsString() {
         return fieldOptionsString;
+    }
+
+    public Boolean getResult() {
+        return result;
     }
 }
