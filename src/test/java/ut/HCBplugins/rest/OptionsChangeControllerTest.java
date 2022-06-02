@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class CustomFieldOptionChangeTest {
+public class OptionsChangeControllerTest {
 
     // https://blog.codecentric.de/en/2014/07/agile-testing-jira-plugins/
 
@@ -38,7 +38,7 @@ public class CustomFieldOptionChangeTest {
     @Test
     public void messageIsValid() {
         /*
-        CustomFieldOptionChange resource = new CustomFieldOptionChange();
+        OptionsChangeController resource = new OptionsChangeController();
 
         Response response = resource.getResponse("customfield_10000"
                 , "TES", "new10");

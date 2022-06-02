@@ -6,6 +6,8 @@ import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,8 +16,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /******************************************************************************
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * http://localhost:2990/jira/rest/cfoptchange/1.0/options&?field_key=customfield_10000&proj_key=TES&new_opt=new3
  *****************************************************************************/
 @Path("/options")
-public class CustomFieldOptionChange {
+public class OptionsChangeController {
 
     private final Logger                    logger;
     private final FieldManager              fieldManager;
@@ -46,10 +46,9 @@ public class CustomFieldOptionChange {
      * constructor initialises logger and receives Jira objects managers trough
      * component accessor
      *************************************************************************/
-    public CustomFieldOptionChange() {
-        new LoggerUtils();
-        logger = LoggerUtils.getLogger();
-        logger.info("starting CustomFieldOptionChange instance construction");
+    public OptionsChangeController() {
+        logger = LoggerFactory.getLogger(OptionsChangeController.class);
+        logger.info("starting OptionsChangeController instance construction");
         try {
             fieldManager = Objects.requireNonNull(ComponentAccessor.getFieldManager()
                     , "failed to acquire fieldManager trough ComponentAccessor");
@@ -61,8 +60,7 @@ public class CustomFieldOptionChange {
                     , "failed to acquire optionsManger trough ComponentAccessor");
             logger.info("all managers acquired successfully. instance constructed");
         } catch (Exception exception) {
-            logger.log(Level.SEVERE, exception.getMessage());
-            LoggerUtils.closeLogFiles();
+            logger.error("caught exception {}", exception.getMessage());
             throw exception;
         }
     }
@@ -71,7 +69,7 @@ public class CustomFieldOptionChange {
     /**************************************************************************
      * the core method which receives the GET parameters,
      * creates new instance of MutableOptionsList nested class, invokes the
-     * .addNew() method of it and constructs the response with
+     * .addNewOption() method of it and constructs the response with
      * PackingResponseToXML class constructor
      * @param field_key the <em>key</em> of the <em>customfield</em> from GET parameter
      * @param proj_key the <em>key</em> of the <em>project</em> from GET parameter
@@ -87,7 +85,7 @@ public class CustomFieldOptionChange {
         logger.info("starting getResponse method...");
         MutableOptionsList mutableOptionsList
                 = new MutableOptionsList(field_key, proj_key, new_opt);
-        mutableOptionsList.addNew(  getFieldManager(),
+        mutableOptionsList.addNewOption(  getFieldManager(),
                                     getProjectManager(),
                                     getFieldConfigSchemeManager(),
                                     getOptionsManger());
@@ -96,7 +94,6 @@ public class CustomFieldOptionChange {
         logger.info("constructed response, returning...");
         // is it necessary to reset logger for closing the log file properly?
         logger.info("closing logger's " + logger.getName() + " handlers");
-        LoggerUtils.closeLogFiles();
         return response;
     }
 

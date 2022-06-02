@@ -10,11 +10,12 @@ import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 /***************************************************************************
  * Class that represents Jira entity "Options list" which by Jira logic
@@ -42,13 +43,14 @@ public class MutableOptionsList {
      * @param newOption new option content from GET parameter
      *********************************************************************/
     MutableOptionsList(String fieldKey, String projectKey, String newOption) {
-        logger = LoggerUtils.getLogger();
+        logger = LoggerFactory.getLogger(MutableOptionsList.class);
         logger.info("starting constructor... field and project keys " + "received are " + fieldKey
                 + "; " + projectKey + "; new option received is " + newOption);
         this.fieldKey = fieldKey;
         this.projectKey = projectKey;
         this.newOption = newOption;
     }
+
 
     /*************************************************************************
      * core method, which acquires all the necessary Jira objects, fills the
@@ -61,10 +63,10 @@ public class MutableOptionsList {
      *                                 schemas
      * @param optionsManager jira object to manipulate field options
      ************************************************************************/
-    public void addNew(FieldManager fieldManager,
-                       ProjectManager projectManager,
-                       FieldConfigSchemeManager fieldConfigSchemeManager,
-                       OptionsManager optionsManager) {
+    public void addNewOption(FieldManager fieldManager,
+                             ProjectManager projectManager,
+                             FieldConfigSchemeManager fieldConfigSchemeManager,
+                             OptionsManager optionsManager) {
         // what this raw use of parametrized class is bad for?
         ConfigurableField field;
         Project project;
@@ -72,7 +74,7 @@ public class MutableOptionsList {
         FieldConfig fieldConfig;
         Options fieldOptions;
 
-        logger.info("starting addNew method... ");
+        logger.info("starting addNewOption method... ");
         try {
             field = Objects.requireNonNull(fieldManager.getConfigurableField(fieldKey)
                     , "failed to acquire field " + fieldKey);
@@ -101,8 +103,8 @@ public class MutableOptionsList {
             logger.info("field options are " + fieldOptionsString);
             fieldOptionsArr = getOptionsArr(fieldOptions);
         } catch (Exception exception) {
-            logger.log(Level.WARNING, exception.getMessage());
-            logger.log(Level.WARNING, "shutting down addNew method");
+            logger.warn(exception.getMessage());
+            logger.warn("shutting down addNewOption method");
             return;
         }
 
@@ -116,8 +118,8 @@ public class MutableOptionsList {
             fieldOptionsArr = getOptionsArr(fieldOptions);
         } else {
             newOption = "not provided";
-            logger.log(Level.WARNING, "failed to add new option due its not provided in GET request");
-            logger.log(Level.WARNING, "shutting down addNew method");
+            logger.warn("failed to add new option due its not provided in GET request");
+            logger.warn("shutting down addNewOption method");
         }
     }
 
@@ -162,7 +164,7 @@ public class MutableOptionsList {
             , Options fieldOptions, String newOption) {
         logger.info("checking if option already exists");
         if (Arrays.asList(fieldOptionsArr).contains(newOption)) {
-            logger.warning("new option \"" + newOption + "\" already exist");
+            logger.warn("new option \"" + newOption + "\" already exist");
             return;
         }
         logger.info("... it doesn't");
@@ -208,6 +210,10 @@ public class MutableOptionsList {
     }
 
     public String[] getFieldOptionsArr() {
+        if (fieldOptionsArr == null) {
+            logger.error("fieldOptionsArr appeared to be nul");
+            return null;
+        }
         return Arrays.copyOf(fieldOptionsArr, fieldOptionsArr.length);
     }
 }

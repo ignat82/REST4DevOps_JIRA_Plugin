@@ -1,5 +1,8 @@
 package HCBplugins.rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.bind.annotation.*;
 import java.util.Arrays;
 
@@ -30,6 +33,8 @@ public class PackingResponseToXML {
     }
 
     public PackingResponseToXML(MutableOptionsList mutableOptionsList) {
+        Logger logger = LoggerFactory.getLogger(PackingResponseToXML.class);
+        logger.info("packing response to XML...");
         fieldName = mutableOptionsList.getFieldName();
         projectName = mutableOptionsList.getProjectName();
         fieldConfigName = mutableOptionsList.getFieldConfigName();
@@ -39,7 +44,6 @@ public class PackingResponseToXML {
         fieldKey = mutableOptionsList.getFieldKey();
         projectKey = mutableOptionsList.getProjectKey();
         result = Boolean.toString(mutableOptionsList.getResult());
-
     }
 
     public String getFieldKey() {

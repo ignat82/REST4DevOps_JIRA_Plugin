@@ -20,8 +20,10 @@
             <version>${jira.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Add dependency on jira-core if you want access to JIRA implementation classes as well as the sanctioned API. -->
-        <!-- This is not normally recommended, but may be required eg when migrating a plugin originally developed against JIRA 4.x -->
+        <!-- Add dependency on jira-core if you want access to JIRA
+        implementation classes as well as the sanctioned API. -->
+        <!-- This is not normally recommended, but may be required eg when
+        migrating a plugin originally developed against JIRA 4.x -->
         <!--
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -122,6 +124,18 @@
             <version>1.8.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+            <scope>provided</scope>
+        </dependency>
         <!--
             3 following dependecies are for hibernate validation
         -->
@@ -153,6 +167,13 @@
                 <configuration>
                     <productVersion>${jira.version}</productVersion>
                     <productDataVersion>${jira.version}</productDataVersion>
+                    <!-- A plugin specific log4j.properties file does not get
+                    picked up using this method once you deploy your plugin to
+                    another stand alone server. It only works using atlas-run
+                    or atlas-debug -->
+
+                    <log4jProperties>src/main/resources/log4j.properties</log4jProperties>
+
                     <!-- Uncomment to install TestKit backdoor in JIRA. -->
                     <!--
                     <pluginArtifacts>
