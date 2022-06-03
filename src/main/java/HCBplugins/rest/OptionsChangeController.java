@@ -35,17 +35,17 @@ import java.util.Objects;
 @Path("/options")
 public class OptionsChangeController {
 
-    private final Logger                    logger;
-    private final FieldManager              fieldManager;
-    private final ProjectManager            projectManager;
-    private final FieldConfigSchemeManager  fieldConfigSchemeManager;
-    private final OptionsManager            optionsManger;
+    private final Logger logger;
+    public final FieldManager fieldManager;
+    private final ProjectManager projectManager;
+    private final FieldConfigSchemeManager fieldConfigSchemeManager;
+    private final OptionsManager optionsManger;
+    private final MutableOptionsService mos;
 
-
-    /**************************************************************************
+    /**
      * constructor initialises logger and receives Jira objects managers trough
      * component accessor
-     *************************************************************************/
+     */
     public OptionsChangeController() {
         logger = LoggerFactory.getLogger(OptionsChangeController.class);
         logger.info("starting OptionsChangeController instance construction");
@@ -63,53 +63,35 @@ public class OptionsChangeController {
             logger.error("caught exception {}", exception.getMessage());
             throw exception;
         }
+        mos = new MutableOptionsService(fieldManager,
+                                        projectManager,
+                                        fieldConfigSchemeManager,
+                                        optionsManger);
     }
 
-
-    /**************************************************************************
+    /**
      * the core method which receives the GET parameters,
      * creates new instance of MutableOptionsList nested class, invokes the
      * .addNewOption() method of it and constructs the response with
      * PackingResponseToXML class constructor
-     * @param field_key the <em>key</em> of the <em>customfield</em> from GET parameter
-     * @param proj_key the <em>key</em> of the <em>project</em> from GET parameter
-     * @param new_opt  string - the <em>new option</em> from GET parameter
+     * @param fieldKey the <em>key</em> of the <em>customfield</em> from GET parameter
+     * @param projKey the <em>key</em> of the <em>project</em> from GET parameter
+     * @param newOpt  string - the <em>new option</em> from GET parameter
      * @return response in XML format
-     *************************************************************************/
+     */
     @GET
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getResponse(@QueryParam("field_key") String field_key,
-                                @QueryParam("proj_key") String proj_key,
-                                @QueryParam("new_opt") String new_opt) {
+    public Response getResponse(@QueryParam("field_key") String fieldKey,
+                                @QueryParam("proj_key") String projKey,
+                                @QueryParam("new_opt") String newOpt) {
+        MutableOptionsObject moo;
         logger.info("starting getResponse method...");
-        MutableOptionsList mutableOptionsList
-                = new MutableOptionsList(field_key, proj_key, new_opt);
-        mutableOptionsList.addNewOption(  getFieldManager(),
-                                    getProjectManager(),
-                                    getFieldConfigSchemeManager(),
-                                    getOptionsManger());
+        moo = mos.initializeMoo(fieldKey, projKey);
+        moo = mos.addNewOption(moo, newOpt);
         Response response = Response.ok(
-                new PackingResponseToXML(mutableOptionsList)).build();
+                new PackingResponseToXML(moo)).build();
         logger.info("constructed response, returning...");
-        // is it necessary to reset logger for closing the log file properly?
-        logger.info("closing logger's " + logger.getName() + " handlers");
         return response;
-    }
-
-    public FieldManager getFieldManager() {
-        return fieldManager;
-    }
-
-    public ProjectManager getProjectManager() {
-        return projectManager;
-    }
-
-    public FieldConfigSchemeManager getFieldConfigSchemeManager() {
-        return fieldConfigSchemeManager;
-    }
-
-    public OptionsManager getOptionsManger() {
-        return optionsManger;
     }
 }

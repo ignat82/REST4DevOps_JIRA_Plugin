@@ -32,18 +32,18 @@ public class PackingResponseToXML {
     public PackingResponseToXML() {
     }
 
-    public PackingResponseToXML(MutableOptionsList mutableOptionsList) {
+    public PackingResponseToXML(MutableOptionsObject moo) {
         Logger logger = LoggerFactory.getLogger(PackingResponseToXML.class);
         logger.info("packing response to XML...");
-        fieldName = mutableOptionsList.getFieldName();
-        projectName = mutableOptionsList.getProjectName();
-        fieldConfigName = mutableOptionsList.getFieldConfigName();
-        newOption = mutableOptionsList.getNewOption();
+        fieldName = moo.getFieldName();
+        projectName = moo.getProjectName();
+        fieldConfigName = moo.getFieldConfigName();
+        newOption = moo.getNewOption();
         // fieldOptionsString = mutableOptionsList.getFieldOptionsString();
-        fieldOptions = mutableOptionsList.getFieldOptionsArr();
-        fieldKey = mutableOptionsList.getFieldKey();
-        projectKey = mutableOptionsList.getProjectKey();
-        result = Boolean.toString(mutableOptionsList.getResult());
+        fieldOptions = moo.getFieldOptionsArr();
+        fieldKey = moo.getFieldKey();
+        projectKey = moo.getProjectKey();
+        result = Boolean.toString(moo.isOptionAdded());
     }
 
     public String getFieldKey() {
