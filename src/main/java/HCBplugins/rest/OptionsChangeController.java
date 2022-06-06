@@ -1,22 +1,22 @@
 package HCBplugins.rest;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Objects;
-
 
 /******************************************************************************
  * The core class that does following:
@@ -33,36 +33,24 @@ import java.util.Objects;
  * http://localhost:2990/jira/rest/cfoptchange/1.0/options&?field_key=customfield_10000&proj_key=TES&new_opt=new3
  *****************************************************************************/
 @Path("/options")
+@Named
 public class OptionsChangeController {
 
-    private final Logger logger;
-    public final FieldManager fieldManager;
-    private final ProjectManager projectManager;
-    private final FieldConfigSchemeManager fieldConfigSchemeManager;
-    private final OptionsManager optionsManger;
+    private static final Logger logger = LoggerFactory.
+            getLogger(OptionsChangeController.class);
     private final MutableOptionsService mos;
 
     /**
      * constructor initialises logger and receives Jira objects managers trough
      * component accessor
      */
-    public OptionsChangeController() {
-        logger = LoggerFactory.getLogger(OptionsChangeController.class);
+    @Inject
+    public OptionsChangeController(PluginSettingsFactory pluginSettingsFactory,
+                                   FieldManager fieldManager,
+                                   ProjectManager projectManager,
+                                   FieldConfigSchemeManager fieldConfigSchemeManager,
+                                   OptionsManager optionsManger) {
         logger.info("starting OptionsChangeController instance construction");
-        try {
-            fieldManager = Objects.requireNonNull(ComponentAccessor.getFieldManager()
-                    , "failed to acquire fieldManager trough ComponentAccessor");
-            projectManager = Objects.requireNonNull(ComponentAccessor.getProjectManager()
-                    , "failed to acquire projectManager trough ComponentAccessor");
-            fieldConfigSchemeManager = Objects.requireNonNull(ComponentAccessor.getFieldConfigSchemeManager()
-                    , "failed to acquire fieldConfigSchemeManager trough ComponentAccessor");
-            optionsManger = Objects.requireNonNull(ComponentAccessor.getOptionsManager()
-                    , "failed to acquire optionsManger trough ComponentAccessor");
-            logger.info("all managers acquired successfully. instance constructed");
-        } catch (Exception exception) {
-            logger.error("caught exception {}", exception.getMessage());
-            throw exception;
-        }
         mos = new MutableOptionsService(fieldManager,
                                         projectManager,
                                         fieldConfigSchemeManager,
@@ -82,6 +70,7 @@ public class OptionsChangeController {
     @GET
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    // rename to addOption ??
     public Response getResponse(@QueryParam("field_key") String fieldKey,
                                 @QueryParam("proj_key") String projKey,
                                 @QueryParam("new_opt") String newOpt) {

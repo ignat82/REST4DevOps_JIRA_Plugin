@@ -17,12 +17,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class MutableOptionsService {
-    private final static Logger logger =
+    private static final Logger                   logger =
             LoggerFactory.getLogger(MutableOptionsService.class);
-    public final FieldManager fieldManager;
-    private final ProjectManager projectManager;
-    private final FieldConfigSchemeManager fieldConfigSchemeManager;
-    private final OptionsManager optionsManager;
+    public final         FieldManager             fieldManager;
+    private final        ProjectManager           projectManager;
+    private final        FieldConfigSchemeManager fieldConfigSchemeManager;
+    private final        OptionsManager           optionsManager;
 
     public MutableOptionsService(FieldManager fieldManager,
                                  ProjectManager projectManager,
@@ -45,7 +45,7 @@ public class MutableOptionsService {
             initializeOptions(moo);
         } catch (Exception exception) {
             logger.warn("got exception when initializing MutableOptionObject: {}",
-                    exception.getMessage());
+                        exception.getMessage());
             logger.warn("shutting down initializeMoo method");
             return moo;
         }
@@ -60,21 +60,21 @@ public class MutableOptionsService {
         FieldConfigScheme fieldConfigScheme;
         FieldConfig fieldConfig;
         field = Objects.requireNonNull(fieldManager.
-                        getConfigurableField(moo.getFieldKey())
-                , "failed to acquire field " + moo.getFieldKey());
+             getConfigurableField(moo.getFieldKey()),
+                   "failed to acquire field " + moo.getFieldKey());
         moo.setFieldName(field.getName());
         logger.info("field {} acquired as {}", moo.getFieldKey(), moo.getFieldName());
         // initializing project
         project = Objects.requireNonNull(projectManager.
-                        getProjectByCurrentKeyIgnoreCase(moo.getProjectKey()),
-                "failed to acquire project " + moo.getProjectKey());
+              getProjectByCurrentKeyIgnoreCase(moo.getProjectKey()),
+                   "failed to acquire project " + moo.getProjectKey());
         moo.setProjectName(project.getName());
         logger.info("project {} acquired as {}",
-                moo.getProjectKey(), moo.getProjectName());
+                    moo.getProjectKey(), moo.getProjectName());
         // initializing fieldConfigScheme from them
         fieldConfigScheme = Objects.requireNonNull(fieldConfigSchemeManager.
-                        getRelevantConfigScheme(project, field),
-                "FieldConfigSchemeManager fails to get FieldConfigScheme");
+              getRelevantConfigScheme(project, field),
+                     "FieldConfigSchemeManager fails to get FieldConfigScheme");
         logger.info("FieldConfigScheme acquired as {}", fieldConfigScheme);
         /******************************************************************
          potential problem here. field can have more than one and only
@@ -82,8 +82,8 @@ public class MutableOptionsService {
          it's necessary to implement the issue type dependency
          ******************************************************************/
         // initializing fieldConfiguration from configurationScheme
-        fieldConfig = Objects.requireNonNull(fieldConfigScheme
-                .getOneAndOnlyConfig(), "failed to acquire FieldConfig");
+        fieldConfig = Objects.requireNonNull(fieldConfigScheme.
+                getOneAndOnlyConfig(), "failed to acquire FieldConfig");
         moo.setFieldConfig(fieldConfig);
         moo.setFieldConfigName(fieldConfig.getName());
         moo.setValidContext(true);
@@ -94,8 +94,8 @@ public class MutableOptionsService {
                                              String newOption) {
         logger.info("starting addNewOption method");
         if (!moo.isValidContext()) {
-            logger.error("shutting down addNewOption cuz MutableOptionsObject "
-                    + "has invalid FieldContext in it");
+            logger.error("shutting down addNewOption cuz MutableOptionsObject " +
+                                 "has invalid FieldContext in it");
             return moo;
         }
         if ((newOption != null) && (!newOption.equals(""))) {
@@ -107,9 +107,9 @@ public class MutableOptionsService {
             }
             int size = moo.getFieldOptionsArr().length;
             optionsManager.createOption(moo.getFieldConfig(),
-                    null,
-                    (long) (size + 1),
-                    newOption);
+                                        null,
+                                        (long) (size + 1),
+                                        newOption);
             moo.setOptionAdded(true);
             logger.info("added option \"{}\" to Options", newOption);
             /* acquiring Options object and Options from it once again, cuz the
@@ -123,10 +123,10 @@ public class MutableOptionsService {
     }
 
     private void initializeOptions(MutableOptionsObject moo) {
-        logger.warn("starting initializeOptions method");
+        logger.info("starting initializeOptions method");
         Options options = Objects.
                 requireNonNull(optionsManager.getOptions(moo.getFieldConfig()),
-                "failed to acquire Options object");
+                               "failed to acquire Options object");
         // acquiring string representation
         moo.setFieldOptionsString(options.toString());
         // and array representation

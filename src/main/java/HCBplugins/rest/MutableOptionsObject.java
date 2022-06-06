@@ -1,6 +1,8 @@
 package HCBplugins.rest;
 
 import com.atlassian.jira.issue.fields.config.FieldConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -16,8 +18,11 @@ public class MutableOptionsObject {
     private String[] fieldOptionsArr;
     private boolean optionAdded = false;
     private boolean validContext = false;
+    private static final Logger logger = LoggerFactory.
+            getLogger(MutableOptionsObject.class.getName());
 
     public MutableOptionsObject(String fieldKey, String projectKey) {
+        logger.info("starting MutableOptionsObject instance construction");
         this.fieldKey = fieldKey;
         this.projectKey = projectKey;
     }
@@ -55,10 +60,9 @@ public class MutableOptionsObject {
     }
 
     public String[] getFieldOptionsArr() {
-        if (fieldOptionsArr == null) {
-            return null;
-        }
-        return Arrays.copyOf(fieldOptionsArr, fieldOptionsArr.length);
+        return (fieldOptionsArr == null)
+                ? null
+                : Arrays.copyOf(fieldOptionsArr, fieldOptionsArr.length);
     }
 
     public void setFieldOptionsArr(String[] fieldOptionsArr) {

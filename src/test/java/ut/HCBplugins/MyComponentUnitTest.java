@@ -11,7 +11,8 @@ public class MyComponentUnitTest
     @Test
     public void testMyName()
     {
-        MyPluginComponent component = new MyPluginComponentImpl(null);
+        MyPluginComponent component = new MyPluginComponentImpl(null, null,
+                null, null, null, null);
         assertEquals("names do not match!", "myComponent",component.getName());
     }
 }

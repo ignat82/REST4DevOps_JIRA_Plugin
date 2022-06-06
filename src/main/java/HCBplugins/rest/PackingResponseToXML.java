@@ -27,13 +27,15 @@ public class PackingResponseToXML {
     private String[] fieldOptions;
     @XmlElement(name = "result")
     private String result;
+    private static final Logger logger = LoggerFactory.
+            getLogger(PackingResponseToXML.class.getName());
 
 
     public PackingResponseToXML() {
+        logger.info("starting PackingResponseToXML instance construction");
     }
 
     public PackingResponseToXML(MutableOptionsObject moo) {
-        Logger logger = LoggerFactory.getLogger(PackingResponseToXML.class);
         logger.info("packing response to XML...");
         fieldName = moo.getFieldName();
         projectName = moo.getProjectName();
