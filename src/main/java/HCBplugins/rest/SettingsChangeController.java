@@ -22,6 +22,7 @@ public class SettingsChangeController {
 
     @Inject
     public SettingsChangeController(PluginSettingsFactory pluginSettingsFactory) {
+        logger.info("starting OptionsChangeController instance construction");
         settingsService = new SettingsService(pluginSettingsFactory);
     }
 
@@ -29,6 +30,7 @@ public class SettingsChangeController {
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response postSettings(String requestBody) {
+        logger.info("starting postSettings method");
         logger.info("request body received is - {}", requestBody);
         return ((requestBody == null || requestBody.equals("")))
                 ? Response.ok(settingsService.getSettings()).build()

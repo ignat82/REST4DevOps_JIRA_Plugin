@@ -77,23 +77,18 @@ public class OptionsChangeController {
     public Response getResponse(@QueryParam("field_key") String fieldKey,
                                 @QueryParam("proj_key") String projKey,
                                 @QueryParam("new_opt") String newOpt) {
-        MutableOptionsObject moo;
         logger.info("starting getResponse method...");
-        moo = mos.initializeMoo(fieldKey, projKey);
+        MutableOptionsObject moo = mos.initializeMoo(fieldKey, projKey);
         List<String> editableFields = settingsService.getSettings().getEditableFields();
         logger.info("editable fields are:");
         for (String field : editableFields) {
             logger.info(field);
         }
-        if (editableFields.contains(fieldKey)) {
-            logger.info("field {} permitted for accessing trough REST service", newOpt);
-            moo = mos.addNewOption(moo, newOpt);
-        } else {
-            logger.warn("field {} NOT permitted for accessing trough REST service", newOpt);
-        }
-        Response response = Response.ok(
-                new PackingResponseToXML(moo)).build();
+        logger.info("field {} permitted for accessing trough REST service - {}",
+                    fieldKey, editableFields.contains(fieldKey));
         logger.info("constructed response, returning...");
-        return response;
+        return (editableFields.contains(fieldKey))
+                ? Response.ok(new PackingResponseToXML(mos.addNewOption(moo, newOpt))).build()
+                : Response.ok(new PackingResponseToXML(moo)).build();
     }
 }
