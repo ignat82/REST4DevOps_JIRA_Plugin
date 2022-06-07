@@ -1,7 +1,5 @@
 package HCBplugins.rest;
 
-import com.atlassian.jira.util.json.JSONException;
-import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import org.slf4j.Logger;
@@ -30,12 +28,8 @@ public class SettingsChangeController {
     @POST
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    // @Consumes({MediaType.APPLICATION_JSON, "application/json"})
-    public Response getSomething(String requestBody) throws JSONException {
-        // logger.warn(MediaType.APPLICATION_JSON);
-        logger.warn("request body received is - {}", requestBody);
-        String settingsString = new JSONObject(requestBody).getString("settingsString");
-        logger.info("settingsString is {}", settingsString);
+    public Response postSettings(String requestBody) {
+        logger.info("request body received is - {}", requestBody);
         return ((requestBody == null || requestBody.equals("")))
                 ? Response.ok(settingsService.getSettings()).build()
                 : Response.ok(settingsService.setSettings(requestBody)).build();

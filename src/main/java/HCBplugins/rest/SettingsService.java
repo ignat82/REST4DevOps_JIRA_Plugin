@@ -21,16 +21,10 @@ public class SettingsService {
     }
 
     public Config getSettings() {
-        logger.info("started getSettings method");
         Config pluginConfig = new Config();
-        // logger.info("Config.class.getName() is: {}", Config.class.getName());
+        logger.info("started getSettings method");
         logger.info("editableFields are: {}.", pluginSettings.get(Config.class.getName() +
                                                                   ".editableFields"));
-        /*
-        String settingsString = pluginSettings.get(Config.class.getName() +
-                                                                 ".editableFields").toString();
-        pluginConfig.setEditableFields(settingsString.split(","));
-        */
         List<String> fieldKeys = (List<String>)
                 pluginSettings.get(Config.class.getName() + ".editableFields");
         logger.info("retrieved list");
@@ -39,17 +33,21 @@ public class SettingsService {
         return pluginConfig;
     }
 
-    public Config setSettings(String settingsString) throws JSONException {
+    public Config setSettings(String requestBody) {
+        String[] fieldsKeys;
+
         logger.info("started setSettings method");
-        logger.info("settingsString is: {}", settingsString);
-        settingsString = new JSONObject(settingsString).getString("settingsString");
-        String[] fieldKeys = settingsString.split(",");
-        for (String key : fieldKeys) {
-            logger.info("key is: {}", key);
+        logger.info("settingsString is: {}", requestBody);
+        try {
+            fieldsKeys = new JSONObject(requestBody).getString("settingsString").split(",");
+            for (String key : fieldsKeys) {
+                logger.info("key is: {}", key);
+            }
+            pluginSettings.put(Config.class.getName() +
+                                       ".editableFields", Arrays.asList(fieldsKeys));
+        } catch (JSONException jsonException){
+            logger.error("caught {} when parsing requestBody", jsonException.getMessage());
         }
-        pluginSettings.put(Config.class.getName() +
-                                   ".editableFields", Arrays.asList(fieldKeys));
         return getSettings();
     }
-
 }
