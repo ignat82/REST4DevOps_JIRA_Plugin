@@ -28,10 +28,10 @@ function submitSettings() {
     } );
     request.onreadystatechange = function () {
         if (request.readyState === 4 && request.status === 200) {
-            var json = JSON.parse(xhr.responseText);
-            console.log(json.email + ", " + json.password);
+            var json = JSON.parse(request.responseText);
+            console.log(request.responseText);
         } else {
-            console.log(request.status);
+            console.log(request.responseText);
         }
     };
     console.log("sending");

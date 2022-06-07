@@ -19,7 +19,7 @@ import java.util.Objects;
 public class MutableOptionsService {
     private static final Logger                   logger =
             LoggerFactory.getLogger(MutableOptionsService.class);
-    public final         FieldManager             fieldManager;
+    private final         FieldManager             fieldManager;
     private final        ProjectManager           projectManager;
     private final        FieldConfigSchemeManager fieldConfigSchemeManager;
     private final        OptionsManager           optionsManager;
@@ -55,24 +55,21 @@ public class MutableOptionsService {
     private void initializeField(MutableOptionsObject moo) {
         logger.info("starting initializeField method");
         // initializing field
-        ConfigurableField field;
-        Project project;
-        FieldConfigScheme fieldConfigScheme;
-        FieldConfig fieldConfig;
-        field = Objects.requireNonNull(fieldManager.
+        ConfigurableField field = Objects.requireNonNull(fieldManager.
              getConfigurableField(moo.getFieldKey()),
                    "failed to acquire field " + moo.getFieldKey());
         moo.setFieldName(field.getName());
         logger.info("field {} acquired as {}", moo.getFieldKey(), moo.getFieldName());
         // initializing project
-        project = Objects.requireNonNull(projectManager.
+        Project project = Objects.requireNonNull(projectManager.
               getProjectByCurrentKeyIgnoreCase(moo.getProjectKey()),
                    "failed to acquire project " + moo.getProjectKey());
         moo.setProjectName(project.getName());
         logger.info("project {} acquired as {}",
                     moo.getProjectKey(), moo.getProjectName());
         // initializing fieldConfigScheme from them
-        fieldConfigScheme = Objects.requireNonNull(fieldConfigSchemeManager.
+        FieldConfigScheme fieldConfigScheme = Objects.
+                requireNonNull(fieldConfigSchemeManager.
               getRelevantConfigScheme(project, field),
                      "FieldConfigSchemeManager fails to get FieldConfigScheme");
         logger.info("FieldConfigScheme acquired as {}", fieldConfigScheme);
@@ -82,7 +79,7 @@ public class MutableOptionsService {
          it's necessary to implement the issue type dependency
          ******************************************************************/
         // initializing fieldConfiguration from configurationScheme
-        fieldConfig = Objects.requireNonNull(fieldConfigScheme.
+        FieldConfig fieldConfig = Objects.requireNonNull(fieldConfigScheme.
                 getOneAndOnlyConfig(), "failed to acquire FieldConfig");
         moo.setFieldConfig(fieldConfig);
         moo.setFieldConfigName(fieldConfig.getName());

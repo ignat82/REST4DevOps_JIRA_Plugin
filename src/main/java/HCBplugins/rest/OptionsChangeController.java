@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 /******************************************************************************
  * The core class that does following:
@@ -39,22 +40,24 @@ public class OptionsChangeController {
     private static final Logger logger = LoggerFactory.
             getLogger(OptionsChangeController.class);
     private final MutableOptionsService mos;
+    private final SettingsService settingsService;
 
     /**
      * constructor initialises logger and receives Jira objects managers trough
      * component accessor
      */
     @Inject
-    public OptionsChangeController(PluginSettingsFactory pluginSettingsFactory,
-                                   FieldManager fieldManager,
+    public OptionsChangeController(FieldManager fieldManager,
                                    ProjectManager projectManager,
                                    FieldConfigSchemeManager fieldConfigSchemeManager,
-                                   OptionsManager optionsManger) {
+                                   OptionsManager optionsManger,
+                                   PluginSettingsFactory pluginSettingsFactory) {
         logger.info("starting OptionsChangeController instance construction");
         mos = new MutableOptionsService(fieldManager,
                                         projectManager,
                                         fieldConfigSchemeManager,
                                         optionsManger);
+        settingsService = new SettingsService(pluginSettingsFactory);
     }
 
     /**
@@ -77,7 +80,17 @@ public class OptionsChangeController {
         MutableOptionsObject moo;
         logger.info("starting getResponse method...");
         moo = mos.initializeMoo(fieldKey, projKey);
-        moo = mos.addNewOption(moo, newOpt);
+        List<String> editableFields = settingsService.getSettings().getEditableFields();
+        logger.info("editable fields are:");
+        for (String field : editableFields) {
+            logger.info(field);
+        }
+        if (editableFields.contains(fieldKey)) {
+            logger.info("field {} permitted for accessing trough REST service", newOpt);
+            moo = mos.addNewOption(moo, newOpt);
+        } else {
+            logger.warn("field {} NOT permitted for accessing trough REST service", newOpt);
+        }
         Response response = Response.ok(
                 new PackingResponseToXML(moo)).build();
         logger.info("constructed response, returning...");
