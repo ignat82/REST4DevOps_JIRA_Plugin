@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PackingResponseToXML {
+public class FieldOptionsXML {
 
     @XmlAttribute
     private String fieldKey;
@@ -28,14 +28,14 @@ public class PackingResponseToXML {
     @XmlElement(name = "result")
     private String result;
     private static final Logger logger = LoggerFactory.
-            getLogger(PackingResponseToXML.class.getName());
+            getLogger(FieldOptionsXML.class.getName());
 
 
-    public PackingResponseToXML() {
-        logger.info("starting PackingResponseToXML instance construction");
+    public FieldOptionsXML() {
+        logger.info("starting FieldOptionsXML instance construction");
     }
 
-    public PackingResponseToXML(MutableOptionsObject moo) {
+    public FieldOptionsXML(FieldOptions moo) {
         logger.info("packing response to XML...");
         fieldName = moo.getFieldName();
         projectName = moo.getProjectName();

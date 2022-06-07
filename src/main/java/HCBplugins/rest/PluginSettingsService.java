@@ -10,40 +10,36 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class SettingsService {
+public class PluginSettingsService {
     private final PluginSettings pluginSettings;
     private static final Logger logger = LoggerFactory.
-            getLogger(SettingsService.class.getName());
+            getLogger(PluginSettingsService.class.getName());
 
-    public SettingsService(PluginSettingsFactory pluginSettingsFactory) {
-        logger.info("started SettingsService constructor");
+    public PluginSettingsService(PluginSettingsFactory pluginSettingsFactory) {
+        logger.info("started PluginSettingsService constructor");
         pluginSettings = pluginSettingsFactory.createGlobalSettings();
     }
 
-    public Config getSettings() {
-        Config pluginConfig = new Config();
+    public PluginSettingsXML getSettings() {
+        PluginSettingsXML pluginSettingsXML = new PluginSettingsXML();
         logger.info("started getSettings method");
-        logger.info("editableFields are: {}.", pluginSettings.get(Config.class.getName() +
-                                                                  ".editableFields"));
         List<String> fieldKeys = (List<String>)
-                pluginSettings.get(Config.class.getName() + ".editableFields");
-        logger.info("retrieved list");
-        pluginConfig.setEditableFields(fieldKeys);
-
-        return pluginConfig;
+                pluginSettings.get(PluginSettingsXML.class.getName() + ".editableFields");
+        logger.info("editableFields are: {}.", fieldKeys);
+        pluginSettingsXML.setEditableFields(fieldKeys);
+        return pluginSettingsXML;
     }
 
-    public Config setSettings(String requestBody) {
-        String[] fieldsKeys;
-
+    public PluginSettingsXML setSettings(String requestBody) {
         logger.info("started setSettings method");
-        logger.info("settingsString is: {}", requestBody);
+        logger.info("requestBody is: {}", requestBody);
         try {
-            fieldsKeys = new JSONObject(requestBody).getString("settingsString").split(",");
+            String[] fieldsKeys = new JSONObject(requestBody).
+                    getString("settingsString").split(",");
             for (String key : fieldsKeys) {
                 logger.info("key is: {}", key);
             }
-            pluginSettings.put(Config.class.getName() +
+            pluginSettings.put(PluginSettingsXML.class.getName() +
                                        ".editableFields", Arrays.asList(fieldsKeys));
         } catch (JSONException jsonException){
             logger.error("caught {} when parsing requestBody", jsonException.getMessage());

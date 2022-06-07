@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement
+@XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class Config {
+public final class PluginSettingsXML {
     private static final Logger       logger = LoggerFactory.
-            getLogger(Config.class.getName());
+            getLogger(PluginSettingsXML.class.getName());
     @XmlElementWrapper(name = "editableFields")
     @XmlElement(name = "field")
     private              List<String> editableFields;
 
-    public Config() {
-        logger.info("starting Config instance construction");
+    public PluginSettingsXML() {
+        logger.info("starting PluginSettingsXML instance construction");
     }
 
     public List<String> getEditableFields()

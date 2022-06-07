@@ -1,6 +1,6 @@
 package it.HCBplugins.rest;
 
-import HCBplugins.rest.PackingResponseToXML;
+import HCBplugins.rest.FieldOptionsXML;
 import org.apache.wink.client.Resource;
 import org.apache.wink.client.RestClient;
 import org.junit.After;
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class OptionsChangeControllerFuncTest {
+public class FieldOptionsControllerFuncTest {
 
     @Before
     public void setup() {
@@ -30,7 +30,7 @@ public class OptionsChangeControllerFuncTest {
         RestClient client = new RestClient();
         Resource resource = client.resource(resourceUrl);
 
-        PackingResponseToXML message = resource.get(PackingResponseToXML.class);
+        FieldOptionsXML message = resource.get(FieldOptionsXML.class);
 
         assertEquals("wrong message", "customfield_10000", message.getFieldKey());
     }

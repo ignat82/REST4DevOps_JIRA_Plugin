@@ -15,25 +15,25 @@ import javax.ws.rs.core.Response;
 
 @Path("/settings")
 @Named
-public class SettingsChangeController {
-    private final SettingsService settingsService;
-    private final static Logger logger =
-            LoggerFactory.getLogger(SettingsChangeController.class.getName());
+public class PluginSettingsController {
+    private final        PluginSettingsService pluginSettingsService;
+    private final static Logger                logger =
+            LoggerFactory.getLogger(PluginSettingsController.class.getName());
 
     @Inject
-    public SettingsChangeController(PluginSettingsFactory pluginSettingsFactory) {
-        logger.info("starting OptionsChangeController instance construction");
-        settingsService = new SettingsService(pluginSettingsFactory);
+    public PluginSettingsController(PluginSettingsFactory pluginSettingsFactory) {
+        logger.info("starting FieldOptionsController instance construction");
+        pluginSettingsService = new PluginSettingsService(pluginSettingsFactory);
     }
 
     @POST
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response postSettings(String requestBody) {
-        logger.info("starting postSettings method");
+        logger.info("********** starting postSettings method ************");
         logger.info("request body received is - {}", requestBody);
         return ((requestBody == null || requestBody.equals("")))
-                ? Response.ok(settingsService.getSettings()).build()
-                : Response.ok(settingsService.setSettings(requestBody)).build();
+                ? Response.ok(pluginSettingsService.getSettings()).build()
+                : Response.ok(pluginSettingsService.setSettings(requestBody)).build();
     }
 }

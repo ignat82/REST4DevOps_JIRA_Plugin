@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public class MutableOptionsObject {
+public class FieldOptions {
     private final String fieldKey;
     private final String projectKey;
-    private String newOption = "not provided";
+    private String newOption;
     private FieldConfig fieldConfig;
     private String fieldName = "failed to acquire";
     private String projectName = "failed to acquire";
@@ -19,12 +19,23 @@ public class MutableOptionsObject {
     private boolean optionAdded = false;
     private boolean validContext = false;
     private static final Logger logger = LoggerFactory.
-            getLogger(MutableOptionsObject.class.getName());
+            getLogger(FieldOptions.class.getName());
 
-    public MutableOptionsObject(String fieldKey, String projectKey) {
-        logger.info("starting MutableOptionsObject instance construction");
+    public FieldOptions() {
+        fieldKey = "not provided";
+        projectKey = "not provided";
+        newOption = "not provided";
+    }
+
+    public FieldOptions(String fieldKey,
+                        String projectKey,
+                        String newOption) {
+        logger.info("starting FieldOptions instance construction");
         this.fieldKey = fieldKey;
         this.projectKey = projectKey;
+        this.newOption = (newOption.equals(""))
+                ? "not provided"
+                : newOption;
     }
 
     public String getFieldName() {

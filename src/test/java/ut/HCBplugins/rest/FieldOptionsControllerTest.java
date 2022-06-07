@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class OptionsChangeControllerTest {
+public class FieldOptionsControllerTest {
 
     // https://blog.codecentric.de/en/2014/07/agile-testing-jira-plugins/
 
@@ -38,11 +38,11 @@ public class OptionsChangeControllerTest {
     @Test
     public void messageIsValid() {
         /*
-        OptionsChangeController resource = new OptionsChangeController();
+        FieldOptionsController resource = new FieldOptionsController();
 
-        Response response = resource.getResponse("customfield_10000"
+        Response response = resource.postOption("customfield_10000"
                 , "TES", "new10");
-        final PackingResponseToXML XMLResponse = (PackingResponseToXML) response.getEntity();
+        final FieldOptionsXML XMLResponse = (FieldOptionsXML) response.getEntity();
 
         assertEquals("wrong message", "customfield_10000", XMLResponse.getFieldKey());
         */
