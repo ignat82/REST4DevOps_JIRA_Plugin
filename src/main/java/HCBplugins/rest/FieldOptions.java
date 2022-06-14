@@ -1,18 +1,23 @@
 package HCBplugins.rest;
 
 import com.atlassian.jira.issue.fields.config.FieldConfig;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-import static HCBplugins.rest.Constants.*;
+import static HCBplugins.rest.Constants.DEFAULT_ACQUIRED;
+import static HCBplugins.rest.Constants.DEFAULT_RECEIVED;
 
+/**
+ * transport class to handle single REST request to /options endpoint
+ */
 public class FieldOptions {
     private final String fieldKey;
     private final String projectKey;
-    private String newOption;
+    private final String issueTypeId;
+    private final String newOption;
     private FieldConfig fieldConfig;
     private String fieldName = DEFAULT_ACQUIRED;
     private String projectName = DEFAULT_ACQUIRED;
@@ -27,18 +32,33 @@ public class FieldOptions {
     public FieldOptions() {
         fieldKey = DEFAULT_RECEIVED;
         projectKey = DEFAULT_RECEIVED;
+        issueTypeId = DEFAULT_RECEIVED;
         newOption = DEFAULT_RECEIVED;
     }
 
+    /**
+     * constructor puts the received request parameters to fields.
+     * further methods will populate the rest of fields, and finally
+     * the object will be provided for repacking acquired parameters to XML
+     * @param fieldKey - jira customfield key
+     * @param projectKey - jira project key
+     * @param issueTypeId - jira issue type id
+     * @param newOption - the value of new option
+     */
     public FieldOptions(String fieldKey,
                         String projectKey,
+                        String issueTypeId,
                         String newOption) {
         logger.info("starting FieldOptions instance construction");
-        this.fieldKey = fieldKey;
-        this.projectKey = projectKey;
-        this.newOption = (StringUtils.isEmpty(newOption))
-                ? DEFAULT_RECEIVED
-                : newOption;
+        logger.info("issue type id received is {}", issueTypeId);
+        this.fieldKey = (!StringUtils.isEmpty(fieldKey))
+                ? fieldKey : DEFAULT_RECEIVED;
+        this.projectKey = (!StringUtils.isEmpty(projectKey))
+                ? projectKey : DEFAULT_RECEIVED;
+        this.issueTypeId = (!StringUtils.isEmpty(issueTypeId))
+                ? issueTypeId : DEFAULT_RECEIVED;
+        this.newOption = (!StringUtils.isEmpty(newOption))
+                ? newOption : DEFAULT_RECEIVED;
     }
 
     public String getFieldName() {
@@ -95,10 +115,6 @@ public class FieldOptions {
         return newOption;
     }
 
-    public void setNewOption(String newOption) {
-        this.newOption = newOption;
-    }
-
     public boolean isOptionAdded() {
         return optionAdded;
     }
@@ -121,5 +137,9 @@ public class FieldOptions {
 
     public void setValidContext(boolean validContext) {
         this.validContext = validContext;
+    }
+
+    public String getIssueTypeId() {
+        return issueTypeId;
     }
 }

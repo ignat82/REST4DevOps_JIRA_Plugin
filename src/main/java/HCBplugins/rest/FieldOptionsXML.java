@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.*;
 import java.util.Arrays;
 
+/**
+ * class to pack FieldOptions transport object to xml response
+ */
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FieldOptionsXML {
@@ -14,6 +17,8 @@ public class FieldOptionsXML {
     private String fieldKey;
     @XmlAttribute
     private String projectKey;
+    @XmlAttribute(name = "issueTypeId")
+    private String issueTypeId;
     @XmlAttribute(name = "newOption")
     private String newOption;
     @XmlElement(name = "fieldName")
@@ -35,17 +40,22 @@ public class FieldOptionsXML {
         logger.info("starting FieldOptionsXML instance construction");
     }
 
-    public FieldOptionsXML(FieldOptions moo) {
+    /**
+     * constructor repacks some transport object fields to xml
+     * @param fieldOptions - transport object
+     */
+    public FieldOptionsXML(FieldOptions fieldOptions) {
         logger.info("packing response to XML...");
-        fieldName = moo.getFieldName();
-        projectName = moo.getProjectName();
-        fieldConfigName = moo.getFieldConfigName();
-        newOption = moo.getNewOption();
+        fieldName = fieldOptions.getFieldName();
+        projectName = fieldOptions.getProjectName();
+        issueTypeId = fieldOptions.getIssueTypeId();
+        fieldConfigName = fieldOptions.getFieldConfigName();
+        newOption = fieldOptions.getNewOption();
         // fieldOptionsString = mutableOptionsList.getFieldOptionsString();
-        fieldOptions = moo.getFieldOptionsArr();
-        fieldKey = moo.getFieldKey();
-        projectKey = moo.getProjectKey();
-        result = Boolean.toString(moo.isOptionAdded());
+        this.fieldOptions = fieldOptions.getFieldOptionsArr();
+        fieldKey = fieldOptions.getFieldKey();
+        projectKey = fieldOptions.getProjectKey();
+        result = Boolean.toString(fieldOptions.isOptionAdded());
     }
 
     public String getFieldKey() {

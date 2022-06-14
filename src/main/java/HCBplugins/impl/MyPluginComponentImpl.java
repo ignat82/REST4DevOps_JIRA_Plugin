@@ -3,7 +3,6 @@ package HCBplugins.impl;
 import HCBplugins.api.MyPluginComponent;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.fields.FieldManager;
-import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
@@ -24,7 +23,6 @@ public class MyPluginComponentImpl implements MyPluginComponent {
     private final  PluginSettingsFactory pluginSettingsFactory;
     public final   FieldManager fieldManager;
     private final ProjectManager projectManager;
-    private final FieldConfigSchemeManager fieldConfigSchemeManager;
     private final  OptionsManager optionsManger;
 
     @Inject
@@ -32,14 +30,12 @@ public class MyPluginComponentImpl implements MyPluginComponent {
                                  @ComponentImport PluginSettingsFactory pluginSettingsFactory,
                                  @ComponentImport FieldManager fieldManager,
                                  @ComponentImport ProjectManager projectManager,
-                                 @ComponentImport FieldConfigSchemeManager fieldConfigSchemeManager,
                                  @ComponentImport OptionsManager optionsManger) {
         logger.info("creating MyPluginComponentImpl instance");
         this.applicationProperties = applicationProperties;
         this.pluginSettingsFactory = pluginSettingsFactory;
         this.fieldManager = fieldManager;
         this.projectManager = projectManager;
-        this.fieldConfigSchemeManager = fieldConfigSchemeManager;
         this.optionsManger = optionsManger;
     }
 

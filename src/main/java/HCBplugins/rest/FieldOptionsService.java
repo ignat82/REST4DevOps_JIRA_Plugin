@@ -1,13 +1,12 @@
 package HCBplugins.rest;
 
+import com.atlassian.jira.issue.context.IssueContextImpl;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
 import com.atlassian.jira.issue.fields.ConfigurableField;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.fields.config.FieldConfig;
-import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
-import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.util.json.JSONException;
@@ -19,35 +18,58 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static HCBplugins.rest.Constants.*;
+import static HCBplugins.rest.Constants.DEFAULT_RECEIVED;
 
+/**
+ * class for manging customfield options trough Jira Java API by handling the
+ * data, received from controller, and returning to controlletr the transport
+ * FieldOption transport object
+ */
 public class FieldOptionsService {
     private static final Logger logger = LoggerFactory.getLogger(FieldOptionsService.class);
     private final FieldManager fieldManager;
     private final ProjectManager projectManager;
-    private final FieldConfigSchemeManager fieldConfigSchemeManager;
     private final OptionsManager optionsManager;
     private final PluginSettingsService pluginSettingsService;
 
+    /**
+     * constructor just receives and saves in fields the instances of Jira beans,
+     * received fron controller
+     * @param fieldManager - customfield manager
+     * @param projectManager - project manager
+     * @param optionsManager - field options manager
+     * @param pluginSettingsFactory - factory to acquire plugin settings service
+     */
     public FieldOptionsService(FieldManager fieldManager,
                                ProjectManager projectManager,
-                               FieldConfigSchemeManager fieldConfigSchemeManager,
                                OptionsManager optionsManager,
                                PluginSettingsFactory pluginSettingsFactory) {
         logger.info("starting FieldOptionsService constructor");
         this.fieldManager = fieldManager;
         this.projectManager = projectManager;
-        this.fieldConfigSchemeManager = fieldConfigSchemeManager;
         this.optionsManager = optionsManager;
         this.pluginSettingsService = new PluginSettingsService(pluginSettingsFactory);
 
         logger.info("constructed FieldOptionsService instance");
     }
 
-    public FieldOptions initializeFieldOptions(String fieldKey, String projectKey) {
+    /**
+     * method to acquire the options of given field in given context
+     * @param fieldKey - jira field key
+     * @param projectKey - jira project key
+     * @param issueTypeId - jira issue type id
+     * @return - FieldOptions transport object
+     */
+    public FieldOptions initializeFieldOptions(String fieldKey,
+                                               String projectKey,
+                                               String issueTypeId) {
         logger.info("starting initializeFieldOptions" +
                             "(String fieldKey, String projectKey) method");
-        FieldOptions fieldOptions = new FieldOptions(fieldKey, projectKey, "");
+        logger.info("issue type id received is {}", issueTypeId);
+        FieldOptions fieldOptions = new FieldOptions(fieldKey,
+                                                     projectKey,
+                                                     issueTypeId,
+                                                     DEFAULT_RECEIVED);
         try {
             initializeField(fieldOptions);
             initializeOptions(fieldOptions);
@@ -60,6 +82,11 @@ public class FieldOptionsService {
         return fieldOptions;
     }
 
+    /**
+     * same method but for POST requests, which parameters are received in
+     * @param requestBody - json string of POST request parameters
+     * @return FieldOptions transport object
+     */
     public FieldOptions initializeFieldOptions(String requestBody) {
         logger.info("starting initializeFieldOptions (String requestBody) method");
         FieldOptions fieldOptions;
@@ -67,6 +94,7 @@ public class FieldOptionsService {
             JSONObject requestJSON = new JSONObject(requestBody);
             fieldOptions = new FieldOptions(requestJSON.getString("fieldKey"),
                                             requestJSON.getString("projectKey"),
+                                            requestJSON.getString("issueTypeId"),
                                             requestJSON.getString("newOption"));
         } catch (JSONException jsonException) {
             logger.error("caught {} when parsing parameters from requestBody",
@@ -85,6 +113,44 @@ public class FieldOptionsService {
         return fieldOptions;
     }
 
+    /**
+     * method for acquiring from jira field object and its options object
+     * the necessary parameters and populating the field of received transport
+     * object with them
+     * @param fieldOptions - transport object with REST request parameters in its
+     *                     fields. acquired parameters will be put to it as well
+     */
+    private void initializeField(FieldOptions fieldOptions) {
+        logger.info("starting initializeField method");
+        ConfigurableField field = Objects.requireNonNull(fieldManager.
+               getConfigurableField(fieldOptions.getFieldKey()),
+                    "failed to acquire field " + fieldOptions.getFieldKey());
+        fieldOptions.setFieldName(field.getName());
+        logger.info("field {} acquired as {}", fieldOptions.getFieldKey(),
+                    fieldOptions.getFieldName());
+        Project project =
+                Objects.requireNonNull(projectManager.
+                       getProjectByCurrentKeyIgnoreCase(fieldOptions.getProjectKey()),
+                       "failed to acquire project " + fieldOptions.getProjectKey());
+        fieldOptions.setProjectName(project.getName());
+        logger.info("project {} acquired as {}",
+                    fieldOptions.getProjectKey(), fieldOptions.getProjectName());
+        IssueContextImpl issueContext =new IssueContextImpl(project.getId(),
+                                                            fieldOptions.getIssueTypeId());
+        logger.info("issue context acquired as " + issueContext.toString());
+        FieldConfig fieldConfig = Objects.requireNonNull(field.
+              getRelevantConfig(issueContext), "failed to acquire FieldConfig from context");
+        fieldOptions.setFieldConfig(fieldConfig);
+        fieldOptions.setFieldConfigName(fieldConfig.getName());
+        fieldOptions.setValidContext(true);
+        logger.info("field configuration acquired as {}", fieldOptions.getFieldConfigName());
+    }
+
+    /**
+     * method for appending new option to customfield
+     * @param requestBody json string with parameters from POST request body
+     * @return FieldOptions transport object
+     */
     public FieldOptions addNewOption(String requestBody) {
         logger.info("starting addNewOption method");
         FieldOptions fieldOptions = initializeFieldOptions(requestBody);
@@ -123,42 +189,10 @@ public class FieldOptionsService {
         return fieldOptions;
     }
 
-    private void initializeField(FieldOptions fieldOptions) {
-        logger.info("starting initializeField method");
-        // initializing field
-        ConfigurableField field = Objects.requireNonNull(fieldManager.
-              getConfigurableField(fieldOptions.getFieldKey()),
-              "failed to acquire field " + fieldOptions.getFieldKey());
-        fieldOptions.setFieldName(field.getName());
-        logger.info("field {} acquired as {}", fieldOptions.getFieldKey(),
-                    fieldOptions.getFieldName());
-        // initializing project
-        Project project = Objects.requireNonNull(projectManager.
-                    getProjectByCurrentKeyIgnoreCase(fieldOptions.getProjectKey()),
-                    "failed to acquire project " + fieldOptions.getProjectKey());
-        fieldOptions.setProjectName(project.getName());
-        logger.info("project {} acquired as {}",
-                    fieldOptions.getProjectKey(), fieldOptions.getProjectName());
-        // initializing fieldConfigScheme from them
-        FieldConfigScheme fieldConfigScheme = Objects.
-                requireNonNull(fieldConfigSchemeManager.
-                getRelevantConfigScheme(project, field),
-                "FieldConfigSchemeManager fails to get FieldConfigScheme");
-        logger.info("FieldConfigScheme acquired as {}", fieldConfigScheme);
-        /******************************************************************
-         potential problem here. field can have more than one and only
-         configuration in in a given project.
-         it's necessary to implement the issue type dependency
-         ******************************************************************/
-        // initializing fieldConfiguration from configurationScheme
-        FieldConfig fieldConfig = Objects.requireNonNull(fieldConfigScheme.
-                getOneAndOnlyConfig(), "failed to acquire FieldConfig");
-        fieldOptions.setFieldConfig(fieldConfig);
-        fieldOptions.setFieldConfigName(fieldConfig.getName());
-        fieldOptions.setValidContext(true);
-        logger.info("field configuration acquired as {}", fieldOptions.getFieldConfigName());
-    }
-
+    /**
+     * method to initialize options of field, attributes of wich are stored in
+     * @param fieldOptions - transport object
+     */
     private void initializeOptions(FieldOptions fieldOptions) {
         logger.info("starting initializeOptions method");
         Options options = Objects.
@@ -172,6 +206,11 @@ public class FieldOptionsService {
         logger.info("field options are {}", fieldOptions.getFieldOptionsString());
     }
 
+    /**
+     * helper method to convert Options object to String array
+     * @param fieldOptions field options object
+     * @return array of String with field options values
+     */
     private String[] getStringArrayFromOptionsObject(Options fieldOptions) {
         String[] fieldOptionsArr = new String[fieldOptions.size()];
         int i = 0;

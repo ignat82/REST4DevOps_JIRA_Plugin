@@ -2,6 +2,7 @@ package HCBplugins.rest;
 
 import java.util.Arrays;
 
+
 public class PluginSettings {
     private String[] fieldKeys;
     PluginSettings() {

@@ -10,16 +10,28 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * servise class to retreive and rewrite plugin settings - the array of strings
+ * with jira customfield keys
+ */
 public class PluginSettingsService {
     private final PluginSettings pluginSettings;
     private static final Logger logger = LoggerFactory.
             getLogger(PluginSettingsService.class.getName());
 
+    /**
+     * constructor creates settingsObject
+     * @param pluginSettingsFactory - injected by spring to invoking class
+     */
     public PluginSettingsService(PluginSettingsFactory pluginSettingsFactory) {
         logger.info("started PluginSettingsService constructor");
         pluginSettings = pluginSettingsFactory.createGlobalSettings();
     }
 
+    /**
+     * receives the current plugin settings from jira
+     * @return - XML transport object
+     */
     public PluginSettingsXML getSettings() {
         PluginSettingsXML pluginSettingsXML = new PluginSettingsXML();
         logger.info("started getSettings method");
@@ -30,6 +42,12 @@ public class PluginSettingsService {
         return pluginSettingsXML;
     }
 
+    /**
+     * parses the request body for fieldKeys parameter (comma-separated list of
+     * customfield keys and saves them in jira
+     * @param requestBody - json string received from POST request
+     * @return  - XML transport object
+     */
     public PluginSettingsXML setSettings(String requestBody) {
         logger.info("started setSettings method");
         logger.info("requestBody is: {}", requestBody);

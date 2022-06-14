@@ -5,49 +5,35 @@ https://developer.atlassian.com/display/DOCS/Introduction+to+the+Atlassian+Plugi
 
 ***************************************************************************************
 
-The only function of this plugin is to provide REST service for adding new
-option to jira custom field options list.
+The function of this plugin is to provide REST service for:
+ - acquiring the list op options for jira select list customfields in given context
+ - adding new option to field options list
+ - the list of customfields, which are exposed to addin of new options is
+ stored in plugin setting. settings are available trough separate endpoint
 
-REST API string format:
-    http://{host}/jira/rest/cfoptchange/1.0/options?field_key={custom field key}
-        &proj_key={project key}&new_opt={new option content}
+REST API endpoints:
 
-the example is:
-    http://localhost:2990/jira/rest/cfoptchange/1.0/options?
-        field_key=customfield_10000&proj_key=TES&new_opt=new8
+for GET request to acquire the options of customfild in given context:
+http://{host}/jira/rest/cfoptchange/1.0/options?fieldKey={key}
+        &projKey={key}&issueTypeId={id}
 
-class src/main/hava/HCBplugins/rest/CfOptChange.java takes as GET parameters:
+for POST request to append new option to options of customfild in given context:
+http://{host}/jira/rest/cfoptchange/1.0/options?fieldKey={key}
+        &projKey={key}&issueTypeId={id}&newOption{value}
 
-    - custom field key, that supposed to be of "selected list" type;
-    - key of project, that's necessary to identify field context in Jira;
-    - the option, the plugin should add to the custom field possible options list.
+for POST request to acquire current settings (list of fields permitted to managing
+options in):
+http://{host}/jira/rest/cfoptchange/1.0/settings
 
-... than reaches Jira trough Jira Java API trough MutableOptionsList class,
- acquires custom field context and adds new option content to field's options list.
-afterwards class provides:
+for POST request rewrite current settings (list of fields permitted to managing
+options in):
+http://{host}/jira/rest/cfoptchange/1.0/settings/?settingsString={string of comma
+separated jira customfield keys without whitespaces}
 
-    - field name and field key;
-    - project name and project key;
-    - new option content;
-    - field configuration name;
-    - new options list of the field.
-
-to CfOptChangeModel.java class in same directory. The least class puts the initial GET
- parameters as well as acquired return parameters to XML response:
-
-    <response customfieldKey="customfield_10000" projectKey="TES" newOption="new8">
-        <fieldName>MultiSelectField</fieldName>
-        <projectName>TestProject</projectName>
-        <fieldConfiguration>Default Configuration for MultiSelectField</fieldConfiguration>
-        <optionsString>{"base1", "base2", "new1"}</optionsString>
-    </response>
-
-There are implemented primitive checks for input validity,
-exceptions catching and errors information.
 
 inherited from skeleton plugin tests in
     src\test\java\ut\HCBplugins\rest\CfOptChangeTest.java
-are commented out, cause I haven't thought how to apply them to implemented logic.
+are commented out
 
-nevertheless that's working MVP and opened to any suggestions for improving it
+
 
