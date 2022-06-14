@@ -18,27 +18,22 @@ import javax.inject.Named;
 @ExportAsService ({MyPluginComponent.class})
 @Named ("myPluginComponent")
 public class MyPluginComponentImpl implements MyPluginComponent {
-    private static Logger                logger = LoggerFactory.getLogger(MyPluginComponentImpl.class.getName());
-    @ComponentImport
+    private static Logger logger = LoggerFactory.getLogger(
+            MyPluginComponentImpl.class.getName());
     private final  ApplicationProperties applicationProperties;
-    @ComponentImport
     private final  PluginSettingsFactory pluginSettingsFactory;
-    @ComponentImport
-    public final   FieldManager          fieldManager;
-    @ComponentImport
+    public final   FieldManager fieldManager;
     private final ProjectManager projectManager;
-    @ComponentImport
     private final FieldConfigSchemeManager fieldConfigSchemeManager;
-    @ComponentImport
-    private final  OptionsManager        optionsManger;
+    private final  OptionsManager optionsManger;
 
     @Inject
-    public MyPluginComponentImpl(ApplicationProperties applicationProperties,
-                                 PluginSettingsFactory pluginSettingsFactory,
-                                 FieldManager fieldManager,
-                                 ProjectManager projectManager,
-                                 FieldConfigSchemeManager fieldConfigSchemeManager,
-                                 OptionsManager optionsManger) {
+    public MyPluginComponentImpl(@ComponentImport ApplicationProperties applicationProperties,
+                                 @ComponentImport PluginSettingsFactory pluginSettingsFactory,
+                                 @ComponentImport FieldManager fieldManager,
+                                 @ComponentImport ProjectManager projectManager,
+                                 @ComponentImport FieldConfigSchemeManager fieldConfigSchemeManager,
+                                 @ComponentImport OptionsManager optionsManger) {
         logger.info("creating MyPluginComponentImpl instance");
         this.applicationProperties = applicationProperties;
         this.pluginSettingsFactory = pluginSettingsFactory;

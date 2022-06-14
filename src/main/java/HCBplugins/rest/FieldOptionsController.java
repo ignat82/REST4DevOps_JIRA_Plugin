@@ -33,9 +33,9 @@ import javax.ws.rs.core.Response;
 @Named
 public class FieldOptionsController {
 
-    private static final Logger              logger = LoggerFactory.
+    private static final Logger logger = LoggerFactory.
             getLogger(FieldOptionsController.class);
-    private final        FieldOptionsService mos;
+    private final FieldOptionsService fieldOptionsService;
 
     /**
      * constructor initialises logger and receives Jira objects managers trough
@@ -48,11 +48,11 @@ public class FieldOptionsController {
                                   OptionsManager optionsManger,
                                   PluginSettingsFactory pluginSettingsFactory) {
         logger.info("starting FieldOptionsController instance construction");
-        mos = new FieldOptionsService(fieldManager,
-                                      projectManager,
-                                      fieldConfigSchemeManager,
-                                      optionsManger,
-                                      pluginSettingsFactory);
+        fieldOptionsService = new FieldOptionsService(fieldManager,
+                                                      projectManager,
+                                                      fieldConfigSchemeManager,
+                                                      optionsManger,
+                                                      pluginSettingsFactory);
     }
 
     /**
@@ -67,7 +67,7 @@ public class FieldOptionsController {
         logger.info("************* starting getOptions method... ************");
         logger.info("constructed response, returning...");
         return Response.ok(new FieldOptionsXML(
-                mos.initializeMoo(fieldKey, projKey))).build();
+                fieldOptionsService.initializeFieldOptions(fieldKey, projKey))).build();
     }
 
     @POST
@@ -77,6 +77,6 @@ public class FieldOptionsController {
     public Response postOption(String requestBody) {
         logger.info("************ starting postOption method... **************");
         return Response.ok(new FieldOptionsXML(
-                mos.addNewOption(requestBody))).build();
+                fieldOptionsService.addNewOption(requestBody))).build();
     }
 }

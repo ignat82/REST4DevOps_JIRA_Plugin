@@ -1,20 +1,23 @@
 package HCBplugins.rest;
 
 import com.atlassian.jira.issue.fields.config.FieldConfig;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+
+import static HCBplugins.rest.Constants.*;
 
 public class FieldOptions {
     private final String fieldKey;
     private final String projectKey;
     private String newOption;
     private FieldConfig fieldConfig;
-    private String fieldName = "failed to acquire";
-    private String projectName = "failed to acquire";
-    private String fieldConfigName = "failed to acquire";
-    private String fieldOptionsString = "failed to acquire";
+    private String fieldName = DEFAULT_ACQUIRED;
+    private String projectName = DEFAULT_ACQUIRED;
+    private String fieldConfigName = DEFAULT_ACQUIRED;
+    private String fieldOptionsString = DEFAULT_ACQUIRED;
     private String[] fieldOptionsArr;
     private boolean optionAdded = false;
     private boolean validContext = false;
@@ -22,9 +25,9 @@ public class FieldOptions {
             getLogger(FieldOptions.class.getName());
 
     public FieldOptions() {
-        fieldKey = "not provided";
-        projectKey = "not provided";
-        newOption = "not provided";
+        fieldKey = DEFAULT_RECEIVED;
+        projectKey = DEFAULT_RECEIVED;
+        newOption = DEFAULT_RECEIVED;
     }
 
     public FieldOptions(String fieldKey,
@@ -33,8 +36,8 @@ public class FieldOptions {
         logger.info("starting FieldOptions instance construction");
         this.fieldKey = fieldKey;
         this.projectKey = projectKey;
-        this.newOption = (newOption.equals(""))
-                ? "not provided"
+        this.newOption = (StringUtils.isEmpty(newOption))
+                ? DEFAULT_RECEIVED
                 : newOption;
     }
 

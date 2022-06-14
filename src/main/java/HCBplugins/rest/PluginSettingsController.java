@@ -16,9 +16,9 @@ import javax.ws.rs.core.Response;
 @Path("/settings")
 @Named
 public class PluginSettingsController {
-    private final        PluginSettingsService pluginSettingsService;
-    private final static Logger                logger =
-            LoggerFactory.getLogger(PluginSettingsController.class.getName());
+    private final PluginSettingsService pluginSettingsService;
+    private final static Logger logger = LoggerFactory
+            .getLogger(PluginSettingsController.class.getName());
 
     @Inject
     public PluginSettingsController(PluginSettingsFactory pluginSettingsFactory) {

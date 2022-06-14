@@ -19,13 +19,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static HCBplugins.rest.Constants.*;
+
 public class FieldOptionsService {
-    private static final Logger                   logger =
-            LoggerFactory.getLogger(FieldOptionsService.class);
-    private final        FieldManager             fieldManager;
-    private final        ProjectManager           projectManager;
-    private final        FieldConfigSchemeManager fieldConfigSchemeManager;
-    private final OptionsManager        optionsManager;
+    private static final Logger logger = LoggerFactory.getLogger(FieldOptionsService.class);
+    private final FieldManager fieldManager;
+    private final ProjectManager projectManager;
+    private final FieldConfigSchemeManager fieldConfigSchemeManager;
+    private final OptionsManager optionsManager;
     private final PluginSettingsService pluginSettingsService;
 
     public FieldOptionsService(FieldManager fieldManager,
@@ -43,97 +44,101 @@ public class FieldOptionsService {
         logger.info("constructed FieldOptionsService instance");
     }
 
-    public FieldOptions initializeMoo(String fieldKey, String projectKey) {
-        logger.info("starting initializeMoo (String fieldKey, String projectKey) method");
-        FieldOptions moo = new FieldOptions(fieldKey, projectKey, "");
+    public FieldOptions initializeFieldOptions(String fieldKey, String projectKey) {
+        logger.info("starting initializeFieldOptions" +
+                            "(String fieldKey, String projectKey) method");
+        FieldOptions fieldOptions = new FieldOptions(fieldKey, projectKey, "");
         try {
-            initializeField(moo);
-            initializeOptions(moo);
+            initializeField(fieldOptions);
+            initializeOptions(fieldOptions);
         } catch (Exception exception) {
             logger.warn("got exception when initializing MutableOptionObject: {}",
                         exception.getMessage());
-            logger.warn("shutting down initializeMoo method");
-            return moo;
+            logger.warn("shutting down initializeFieldOptions method");
+            return fieldOptions;
         }
-        return moo;
+        return fieldOptions;
     }
 
-    public FieldOptions initializeMoo(String requestBody) {
-        logger.info("starting initializeMoo (String requestBody) method");
-        FieldOptions moo;
+    public FieldOptions initializeFieldOptions(String requestBody) {
+        logger.info("starting initializeFieldOptions (String requestBody) method");
+        FieldOptions fieldOptions;
         try {
             JSONObject requestJSON = new JSONObject(requestBody);
-            moo = new FieldOptions(requestJSON.getString("fieldKey"),
-                                   requestJSON.getString("projectKey"),
-                                   requestJSON.getString("newOption"));
+            fieldOptions = new FieldOptions(requestJSON.getString("fieldKey"),
+                                            requestJSON.getString("projectKey"),
+                                            requestJSON.getString("newOption"));
         } catch (JSONException jsonException) {
             logger.error("caught {} when parsing parameters from requestBody",
                          jsonException.getMessage());
-            moo = new FieldOptions();
+            fieldOptions = new FieldOptions();
         }
         try {
-            initializeField(moo);
-            initializeOptions(moo);
+            initializeField(fieldOptions);
+            initializeOptions(fieldOptions);
         } catch (Exception exception) {
             logger.warn("got exception when initializing MutableOptionObject: {}",
                         exception.getMessage());
-            logger.warn("shutting down initializeMoo method");
-            return moo;
+            logger.warn("shutting down initializeFieldOptions method");
+            return fieldOptions;
         }
-        return moo;
+        return fieldOptions;
     }
 
     public FieldOptions addNewOption(String requestBody) {
         logger.info("starting addNewOption method");
-        FieldOptions moo = initializeMoo(requestBody);
-        if (!pluginSettingsService.getSettings().getEditableFields().contains(moo.getFieldKey())) {
+        FieldOptions fieldOptions = initializeFieldOptions(requestBody);
+        if (!pluginSettingsService.getSettings().getEditableFields().
+                contains(fieldOptions.getFieldKey())) {
             logger.warn("field {} is not permitted for edit by plugin settings. " +
-                                "shutting down", moo.getFieldKey());
-            return moo;
+                                "shutting down", fieldOptions.getFieldKey());
+            return fieldOptions;
         }
-        if (!moo.isValidContext()) {
+        if (!fieldOptions.isValidContext()) {
             logger.error("shutting down addNewOption cuz FieldOptions " +
                                  "has invalid FieldContext in it");
-            return moo;
+            return fieldOptions;
         }
-        if (!moo.getNewOption().equals("not provided")) {
-            logger.info("trying to add new option \"{}\"", moo.getNewOption());
-            if (Arrays.asList(moo.getFieldOptionsArr()).contains(moo.getNewOption())) {
-                logger.warn("new option \"{}\" already exist", moo.getNewOption());
-                return moo;
+        if (!fieldOptions.getNewOption().equals(DEFAULT_RECEIVED)) {
+            logger.info("trying to add new option \"{}\"", fieldOptions.getNewOption());
+            if (Arrays.asList(fieldOptions.getFieldOptionsArr()).
+                    contains(fieldOptions.getNewOption())) {
+                logger.warn("new option \"{}\" already exist", fieldOptions.getNewOption());
+                return fieldOptions;
             }
-            int size = moo.getFieldOptionsArr().length;
-            optionsManager.createOption(moo.getFieldConfig(),
+            int size = fieldOptions.getFieldOptionsArr().length;
+            optionsManager.createOption(fieldOptions.getFieldConfig(),
                                         null,
                                         (long) (size + 1),
-                                        moo.getNewOption());
-            moo.setOptionAdded(true);
-            logger.info("added option \"{}\" to Options", moo.getNewOption());
+                                        fieldOptions.getNewOption());
+            fieldOptions.setOptionAdded(true);
+            logger.info("added option \"{}\" to Options", fieldOptions.getNewOption());
             /* acquiring Options object and Options from it once again, cuz the
             new one was appended */
-            initializeOptions(moo);
+            initializeOptions(fieldOptions);
         } else {
             logger.warn("failed to add new option due its not provided in REST request");
             logger.warn("shutting down addNewOption method");
         }
-        return moo;
+        return fieldOptions;
     }
 
-    private void initializeField(FieldOptions moo) {
+    private void initializeField(FieldOptions fieldOptions) {
         logger.info("starting initializeField method");
         // initializing field
         ConfigurableField field = Objects.requireNonNull(fieldManager.
-              getConfigurableField(moo.getFieldKey()),
-              "failed to acquire field " + moo.getFieldKey());
-        moo.setFieldName(field.getName());
-        logger.info("field {} acquired as {}", moo.getFieldKey(), moo.getFieldName());
+              getConfigurableField(fieldOptions.getFieldKey()),
+              "failed to acquire field " + fieldOptions.getFieldKey());
+        fieldOptions.setFieldName(field.getName());
+        logger.info("field {} acquired as {}", fieldOptions.getFieldKey(),
+                    fieldOptions.getFieldName());
         // initializing project
         Project project = Objects.requireNonNull(projectManager.
-                    getProjectByCurrentKeyIgnoreCase(moo.getProjectKey()),
-                    "failed to acquire project " + moo.getProjectKey());
-        moo.setProjectName(project.getName());
+                    getProjectByCurrentKeyIgnoreCase(fieldOptions.getProjectKey()),
+                    "failed to acquire project " + fieldOptions.getProjectKey());
+        fieldOptions.setProjectName(project.getName());
         logger.info("project {} acquired as {}",
-                    moo.getProjectKey(), moo.getProjectName());
+                    fieldOptions.getProjectKey(), fieldOptions.getProjectName());
         // initializing fieldConfigScheme from them
         FieldConfigScheme fieldConfigScheme = Objects.
                 requireNonNull(fieldConfigSchemeManager.
@@ -148,22 +153,23 @@ public class FieldOptionsService {
         // initializing fieldConfiguration from configurationScheme
         FieldConfig fieldConfig = Objects.requireNonNull(fieldConfigScheme.
                 getOneAndOnlyConfig(), "failed to acquire FieldConfig");
-        moo.setFieldConfig(fieldConfig);
-        moo.setFieldConfigName(fieldConfig.getName());
-        moo.setValidContext(true);
-        logger.info("field configuration acquired as {}", moo.getFieldConfigName());
+        fieldOptions.setFieldConfig(fieldConfig);
+        fieldOptions.setFieldConfigName(fieldConfig.getName());
+        fieldOptions.setValidContext(true);
+        logger.info("field configuration acquired as {}", fieldOptions.getFieldConfigName());
     }
 
-    private void initializeOptions(FieldOptions moo) {
+    private void initializeOptions(FieldOptions fieldOptions) {
         logger.info("starting initializeOptions method");
         Options options = Objects.
-                requireNonNull(optionsManager.getOptions(moo.getFieldConfig()),
+                requireNonNull(optionsManager.getOptions(fieldOptions.getFieldConfig()),
                                "failed to acquire Options object");
         // acquiring string representation
-        moo.setFieldOptionsString(options.toString());
+        fieldOptions.setFieldOptionsString(options.toString());
         // and array representation
-        moo.setFieldOptionsArr(getStringArrayFromOptionsObject(options));
-        logger.info("field options are {}", moo.getFieldOptionsString());
+        fieldOptions.setFieldOptionsArr(getStringArrayFromOptionsObject(options));
+        // fieldOptions.setFieldOptionsArr((String[]) options.toArray());
+        logger.info("field options are {}", fieldOptions.getFieldOptionsString());
     }
 
     private String[] getStringArrayFromOptionsObject(Options fieldOptions) {
