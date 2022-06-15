@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.*;
 import java.util.Arrays;
 
+import static HCBplugins.rest.FieldOptions.RequestParameters;
+import static HCBplugins.rest.FieldOptions.FieldParameters;
+
 /**
  * class to pack FieldOptions transport object to xml response
  */
@@ -21,6 +24,8 @@ public class FieldOptionsXML {
     private String issueTypeId;
     @XmlAttribute(name = "newOption")
     private String newOption;
+    @XmlAttribute(name = "action")
+    private String action;
     @XmlElement(name = "fieldName")
     private String fieldName;
     @XmlElement(name = "projectName")
@@ -46,15 +51,19 @@ public class FieldOptionsXML {
      */
     public FieldOptionsXML(FieldOptions fieldOptions) {
         logger.info("packing response to XML...");
-        fieldName = fieldOptions.getFieldName();
-        projectName = fieldOptions.getProjectName();
-        issueTypeId = fieldOptions.getIssueTypeId();
-        fieldConfigName = fieldOptions.getFieldConfigName();
-        newOption = fieldOptions.getNewOption();
+        RequestParameters requestParameters = fieldOptions.getRequestParameters();;
+        fieldKey = requestParameters.getFieldKey();
+        projectKey = requestParameters.getProjectKey();
+        issueTypeId = requestParameters.getIssueTypeId();
+        newOption = requestParameters.getNewOption();
+        action = requestParameters.getAction();
+
+        FieldParameters fieldParameters = fieldOptions.getFieldParameters();
+        fieldName = fieldParameters.getFieldName();
+        projectName = fieldParameters.getProjectName();
+        fieldConfigName = fieldParameters.getFieldConfigName();
         // fieldOptionsString = mutableOptionsList.getFieldOptionsString();
         this.fieldOptions = fieldOptions.getFieldOptionsArr();
-        fieldKey = fieldOptions.getFieldKey();
-        projectKey = fieldOptions.getProjectKey();
         result = Boolean.toString(fieldOptions.isOptionAdded());
     }
 

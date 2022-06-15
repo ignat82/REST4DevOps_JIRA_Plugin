@@ -3,6 +3,8 @@ package HCBplugins.rest;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import org.slf4j.Logger;
@@ -81,7 +83,34 @@ public class FieldOptionsController {
     // rename to addOption ??
     public Response postOption(String requestBody) {
         logger.info("************ starting postOption method... **************");
-        return Response.ok(new FieldOptionsXML(
-                fieldOptionsService.addNewOption(requestBody))).build();
+        String action;
+        try {
+            JSONObject requestJSON = new JSONObject(requestBody);
+            action = requestJSON.getString("action");
+        } catch (JSONException e) {
+            return Response.ok(e.getMessage()).build();
+        }
+        FieldOptionsXML fieldOptionsXML = null;
+        switch (action) {
+            case ("add"): {
+                fieldOptionsXML = new FieldOptionsXML(
+                        fieldOptionsService.addNewOption(requestBody));
+                break;
+            }
+            case ("enable") : {
+                fieldOptionsXML = new FieldOptionsXML(
+                        fieldOptionsService.enableOption(requestBody));
+                break;
+            }
+            case ("disable") : {
+                fieldOptionsXML = new FieldOptionsXML(
+                        fieldOptionsService.disableOption(requestBody));
+                break;
+            }
+            default :
+            fieldOptionsXML = new FieldOptionsXML(
+                    fieldOptionsService.addNewOption(requestBody));
+        }
+        return Response.ok(fieldOptionsXML).build();
     }
 }
