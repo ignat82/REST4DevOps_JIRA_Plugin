@@ -141,8 +141,6 @@ public class FieldOptions {
         fieldParameters.setProjectName(this.fieldParameters.getProjectName());
         fieldParameters.setFieldConfig(this.fieldParameters.getFieldConfig());
         fieldParameters.setFieldConfigName(this.fieldParameters.getFieldConfigName());
-        // fieldParameters.setFieldOptionsString(this.fieldParameters.getFieldOptionsString());
-        // fieldParameters.setFieldOptionsArr(this.fieldParameters.getFieldOptionsArr());
         fieldParameters.setValidContext(this.fieldParameters.isValidContext());
         fieldParameters.setPermittedToEdit(this.fieldParameters.isPermittedToEdit());
         return fieldParameters;
@@ -154,8 +152,6 @@ public class FieldOptions {
         this.fieldParameters.setProjectName(fieldParameters.getProjectName());
         this.fieldParameters.setFieldConfig(fieldParameters.getFieldConfig());
         this.fieldParameters.setFieldConfigName(fieldParameters.getFieldConfigName());
-        // this.fieldParameters.setFieldOptionsString(fieldParameters.getFieldOptionsString());
-        // this.fieldParameters.setFieldOptionsArr(fieldParameters.getFieldOptionsArr());
         this.fieldParameters.setValidContext(fieldParameters.isValidContext());
         this.fieldParameters.setPermittedToEdit(fieldParameters.isPermittedToEdit());
     }

@@ -51,7 +51,7 @@ public class FieldOptionsXML {
      */
     public FieldOptionsXML(FieldOptions fieldOptions) {
         logger.info("packing response to XML...");
-        RequestParameters requestParameters = fieldOptions.getRequestParameters();;
+        RequestParameters requestParameters = fieldOptions.getRequestParameters();
         fieldKey = requestParameters.getFieldKey();
         projectKey = requestParameters.getProjectKey();
         issueTypeId = requestParameters.getIssueTypeId();

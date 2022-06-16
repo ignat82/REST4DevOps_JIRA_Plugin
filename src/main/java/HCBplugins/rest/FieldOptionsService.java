@@ -107,10 +107,15 @@ public class FieldOptionsService {
             return fieldOptions;
         }
         String optionValue = requestParameters.getNewOption();
-        logger.info("trying to disable option \"{}\"", optionValue);
+        logger.info("trying to enable option \"{}\"", optionValue);
         Options options = optionsManager.getOptions(fieldParameters.getFieldConfig());
-        options.getOptionForValue(optionValue, null).setDisabled(false);
-        logger.info("enabled option \"{}\"", requestParameters.getNewOption());
+        if (options.getOptionForValue(optionValue, null) != null) {
+            options.getOptionForValue(optionValue, null).setDisabled(false);
+            logger.info("enabled option \"{}\"", requestParameters.getNewOption());
+        } else {
+            logger.error("option {} seems not to exist. shutting down",
+                         requestParameters.getNewOption());
+        }
         return fieldOptions;
     }
 
@@ -163,6 +168,7 @@ public class FieldOptionsService {
             logger.warn("got exception when initializing MutableOptionObject: {}",
                         exception.getMessage());
             logger.warn("shutting down initializeFieldOptions method");
+            fieldOptions.setFieldParameters(new FieldParameters());
             return fieldOptions;
         }
         return fieldOptions;
