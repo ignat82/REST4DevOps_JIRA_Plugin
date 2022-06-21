@@ -1,10 +1,9 @@
 package HCBplugins.rest;
 
+import HCBplugins.DTO.FieldOptions;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.project.ProjectManager;
-import com.atlassian.jira.util.json.JSONException;
-import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import org.slf4j.Logger;
@@ -60,10 +59,10 @@ public class FieldOptionsController {
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     // rename to addOption ??
-    public Response getOptions(@QueryParam("fieldKey") String fieldKey,
-                               @QueryParam("projKey") String projKey,
-                               @QueryParam("issueTypeId") String issueTypeId) {
-        logger.info("************* starting getOptions method... ************");
+    public Response doGet(@QueryParam("fieldKey") String fieldKey,
+                          @QueryParam("projKey") String projKey,
+                          @QueryParam("issueTypeId") String issueTypeId) {
+        logger.info("************* starting doGet method... ************");
         return Response.ok(new FieldOptionsXML(
                 fieldOptionsService.initializeFieldOptions(
                         fieldKey, projKey, issueTypeId))).build();
@@ -81,36 +80,11 @@ public class FieldOptionsController {
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     // rename to addOption ??
-    public Response postOption(String requestBody) {
-        logger.info("************ starting postOption method... **************");
-        String action;
-        try {
-            JSONObject requestJSON = new JSONObject(requestBody);
-            action = requestJSON.getString("action");
-        } catch (JSONException e) {
-            return Response.ok(e.getMessage()).build();
-        }
-        FieldOptionsXML fieldOptionsXML;
-        switch (action) {
-            case ("add"): {
-                fieldOptionsXML = new FieldOptionsXML(
-                        fieldOptionsService.addNewOption(requestBody));
-                break;
-            }
-            case ("enable") : {
-                fieldOptionsXML = new FieldOptionsXML(
-                        fieldOptionsService.enableOption(requestBody));
-                break;
-            }
-            case ("disable") : {
-                fieldOptionsXML = new FieldOptionsXML(
-                        fieldOptionsService.disableOption(requestBody));
-                break;
-            }
-            default :
-            fieldOptionsXML = new FieldOptionsXML(
-                    fieldOptionsService.addNewOption(requestBody));
-        }
-        return Response.ok(fieldOptionsXML).build();
+    public Response doPost(String requestBody) {
+        logger.info("************ starting doPost method... **************");
+        FieldOptions fieldOptions = fieldOptionsService.postOption(requestBody);
+        return (fieldOptions == null)
+            ? Response.ok("something goes wrong. Check log file").build()
+            : Response.ok(new FieldOptionsXML(fieldOptions)).build();
     }
 }
