@@ -1,4 +1,4 @@
-package HCBplugins.rest;
+package HCBplugins;
 
 /**
  * constants for storing default value for FieldOptions field including

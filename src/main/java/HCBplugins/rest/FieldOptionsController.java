@@ -34,12 +34,12 @@ public class FieldOptionsController {
     @Inject
     public FieldOptionsController(FieldManager fieldManager,
                                   ProjectManager projectManager,
-                                  OptionsManager optionsManger,
+                                  OptionsManager optionsManager,
                                   PluginSettingsFactory pluginSettingsFactory) {
         logger.info("starting FieldOptionsController instance construction");
         fieldOptionsService = new FieldOptionsService(fieldManager,
                                                       projectManager,
-                                                      optionsManger,
+                                                      optionsManager,
                                                       pluginSettingsFactory);
     }
 
@@ -90,7 +90,7 @@ public class FieldOptionsController {
         } catch (JSONException e) {
             return Response.ok(e.getMessage()).build();
         }
-        FieldOptionsXML fieldOptionsXML = null;
+        FieldOptionsXML fieldOptionsXML;
         switch (action) {
             case ("add"): {
                 fieldOptionsXML = new FieldOptionsXML(

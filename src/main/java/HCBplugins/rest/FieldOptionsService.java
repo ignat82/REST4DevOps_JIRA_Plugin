@@ -1,5 +1,8 @@
 package HCBplugins.rest;
 
+import HCBplugins.DTO.FieldOptions;
+import HCBplugins.DTO.FieldParameters;
+import HCBplugins.DTO.RequestParameters;
 import com.atlassian.jira.issue.context.IssueContextImpl;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.customfields.option.Option;
@@ -18,9 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static HCBplugins.rest.Constants.DEFAULT_RECEIVED;
-import static HCBplugins.rest.FieldOptions.RequestParameters;
-import static HCBplugins.rest.FieldOptions.FieldParameters;
+import static HCBplugins.Constants.DEFAULT_RECEIVED;
 
 /**
  * class for manging customfield options trough Jira Java API by handling the
@@ -54,6 +55,13 @@ public class FieldOptionsService {
 
         logger.info("constructed FieldOptionsService instance");
     }
+
+    /**
+     * method for appending new option to customfield
+     * @param requestBody json string with parameters from POST request body
+     * @return FieldOptions transport object
+     */
+
 
     public FieldOptions addNewOption(String requestBody) {
         logger.info("starting addNewOption method with initializing FieldOptions");
@@ -269,12 +277,6 @@ public class FieldOptionsService {
         // fieldOptions.setFieldOptionsArr((String[]) options.toArray());
         logger.info("field options are {}", fieldOptions.getFieldOptionsString());
     }
-
-    /**
-     * method for appending new option to customfield
-     * @param requestBody json string with parameters from POST request body
-     * @return FieldOptions transport object
-     */
 
 
     /**

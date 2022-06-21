@@ -48,8 +48,8 @@ public class PluginSettingsService {
      * @param requestBody - json string received from POST request
      * @return  - XML transport object
      */
-    public PluginSettingsXML setSettings(String requestBody) {
-        logger.info("started setSettings method");
+    public PluginSettingsXML saveSettings(String requestBody) {
+        logger.info("started saveSettings method");
         logger.info("requestBody is: {}", requestBody);
         try {
             String[] fieldsKeys = new JSONObject(requestBody).

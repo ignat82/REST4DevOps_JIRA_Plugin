@@ -10,8 +10,8 @@
         <name>Home Credit Bank</name>
         <url>http://www.homecredit.ru/</url>
     </organization>
-    <name>REST4DevOps</name>
-    <description>This is the HCBplugins:REST4DevOps plugin for Atlassian JIRA.</description>
+    <name>jira-adapter</name>
+    <description>This is the plugin for Atlassian JIRA. Rest adapter.</description>
     <packaging>atlassian-plugin</packaging>
     <dependencies>
         <dependency>

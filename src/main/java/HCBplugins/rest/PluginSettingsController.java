@@ -48,6 +48,6 @@ public class PluginSettingsController {
         logger.info("request body received is - {}", requestBody);
         return ((requestBody == null || requestBody.equals("")))
                 ? Response.ok(pluginSettingsService.getSettings()).build()
-                : Response.ok(pluginSettingsService.setSettings(requestBody)).build();
+                : Response.ok(pluginSettingsService.saveSettings(requestBody)).build();
     }
 }

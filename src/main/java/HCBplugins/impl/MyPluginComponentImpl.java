@@ -17,7 +17,7 @@ import javax.inject.Named;
 @ExportAsService ({MyPluginComponent.class})
 @Named ("myPluginComponent")
 public class MyPluginComponentImpl implements MyPluginComponent {
-    private static Logger logger = LoggerFactory.getLogger(
+    private static final Logger logger = LoggerFactory.getLogger(
             MyPluginComponentImpl.class.getName());
     private final  ApplicationProperties applicationProperties;
     private final  PluginSettingsFactory pluginSettingsFactory;
