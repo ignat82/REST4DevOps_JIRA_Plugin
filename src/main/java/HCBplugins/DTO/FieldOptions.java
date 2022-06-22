@@ -1,11 +1,10 @@
 package HCBplugins.DTO;
 
+import HCBplugins.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-
-import static HCBplugins.Constants.DEFAULT_ACQUIRED;
 
 /**
  * transport class to handle single REST request to /options endpoint
@@ -17,7 +16,7 @@ public class FieldOptions {
 
     private RequestParameters requestParameters;
     private FieldParameters fieldParameters;
-    private String fieldOptionsString = DEFAULT_ACQUIRED;
+    private String fieldOptionsString = Constants.DEFAULT_ACQUIRED;
     private String[] fieldOptionsArr;
     private boolean optionAdded = false;
 

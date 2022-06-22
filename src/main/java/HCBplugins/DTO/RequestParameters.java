@@ -1,10 +1,9 @@
 package HCBplugins.DTO;
 
+import HCBplugins.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static HCBplugins.Constants.DEFAULT_RECEIVED;
 
 public class RequestParameters {
     private final String fieldKey;
@@ -22,15 +21,15 @@ public class RequestParameters {
                              String action) {
         logger.info("RequestParameters constructed");
         this.fieldKey = (!StringUtils.isEmpty(fieldKey))
-                ? fieldKey : DEFAULT_RECEIVED;
+                ? fieldKey : Constants.DEFAULT_RECEIVED;
         this.projectKey = (!StringUtils.isEmpty(projectKey))
-                ? projectKey : DEFAULT_RECEIVED;
+                ? projectKey : Constants.DEFAULT_RECEIVED;
         this.issueTypeId = (!StringUtils.isEmpty(issueTypeId))
-                ? issueTypeId : DEFAULT_RECEIVED;
+                ? issueTypeId : Constants.DEFAULT_RECEIVED;
         this.newOption = (!StringUtils.isEmpty(newOption))
-                ? newOption : DEFAULT_RECEIVED;
+                ? newOption : Constants.DEFAULT_RECEIVED;
         this.action = (!StringUtils.isEmpty(action))
-                ? action : DEFAULT_RECEIVED;
+                ? action : Constants.DEFAULT_RECEIVED;
     }
 
     public RequestParameters(String fieldKey,
@@ -39,16 +38,16 @@ public class RequestParameters {
         this(fieldKey,
              projectKey,
              issueTypeId,
-             DEFAULT_RECEIVED,
-             DEFAULT_RECEIVED);
+             Constants.DEFAULT_RECEIVED,
+             Constants.DEFAULT_RECEIVED);
     }
 
     public RequestParameters() {
-        this(DEFAULT_RECEIVED,
-             DEFAULT_RECEIVED,
-             DEFAULT_RECEIVED,
-             DEFAULT_RECEIVED,
-             DEFAULT_RECEIVED);
+        this(Constants.DEFAULT_RECEIVED,
+             Constants.DEFAULT_RECEIVED,
+             Constants.DEFAULT_RECEIVED,
+             Constants.DEFAULT_RECEIVED,
+             Constants.DEFAULT_RECEIVED);
         logger.info("dummy RequestParameters constructed");
     }
 

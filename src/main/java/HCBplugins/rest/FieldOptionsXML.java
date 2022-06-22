@@ -1,15 +1,13 @@
 package HCBplugins.rest;
 
-import HCBplugins.DTO.FieldOptions;
+import HCBplugins.DTO.FieldParameters;
+import HCBplugins.DTO.RequestParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import HCBplugins.DTO.FieldOptions;
 
 import javax.xml.bind.annotation.*;
 import java.util.Arrays;
-
-import HCBplugins.DTO.RequestParameters;
-
-import HCBplugins.DTO.FieldParameters;
 
 /**
  * class to pack FieldOptions transport object to xml response

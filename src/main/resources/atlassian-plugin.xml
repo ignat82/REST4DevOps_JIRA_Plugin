@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2"> 
-  <plugin-info> 
-    <description>${project.description}</description>  
-    <version>${project.version}</version>  
-    <vendor name="${project.organization.name}" url="${project.organization.url}"/>  
-    <param name="plugin-icon">images/pluginIcon.png</param>  
-    <param name="plugin-logo">images/pluginLogo.png</param> 
-  </plugin-info>  
-  <!-- add our i18n resource -->  
-  <resource type="i18n" name="i18n" location="REST4DevOps"/>  
-  <!-- add our web resources -->  
-  <web-resource key="REST4DevOps-resources" name="REST4DevOps Web Resources"> 
-    <dependency>com.atlassian.auiplugin:ajs</dependency>  
-    <resource type="download" name="REST4DevOps.css" location="/css/REST4DevOps.css"/>  
-    <resource type="download" name="REST4DevOps.js" location="/js/REST4DevOps.js"/>  
-    <resource type="download" name="images/" location="/images"/>  
-    <context>REST4DevOps</context> 
-  </web-resource>  
-  <rest name="Cf Opt Change" i18n-name-key="cf-opt-change.name" key="cf-opt-change" path="/cfoptchange" version="1.0"> 
-    <description key="cf-opt-change.description">The Cf Opt Change Plugin</description> 
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <param name="plugin-icon">images/pluginIcon.png</param>
+    <param name="plugin-logo">images/pluginLogo.png</param>
+  </plugin-info>
+  <!-- add our i18n resource -->
+  <resource type="i18n" name="i18n" location="HCBplugins"/>
+  <!-- add our web resources -->
+  <web-resource key="HCBplugins-resources" name="HCBplugins Web Resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <resource type="download" name="HCBplugins.css" location="/css/HCBplugins.css"/>
+    <resource type="download" name="HCBplugins.js" location="/js/HCBplugins.js"/>
+    <resource type="download" name="images/" location="/images"/>
+    <context>HCBplugins</context>
+  </web-resource>
+  <rest name="Cf Opt Change" i18n-name-key="cf-opt-change.name" key="cf-opt-change" path="/cfoptchange" version="1.0">
+    <description key="cf-opt-change.description">The Cf Opt Change Plugin</description>
   </rest>
 </atlassian-plugin>

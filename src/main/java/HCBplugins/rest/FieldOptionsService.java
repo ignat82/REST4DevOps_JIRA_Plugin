@@ -1,8 +1,9 @@
 package HCBplugins.rest;
 
-import HCBplugins.DTO.FieldOptions;
+import HCBplugins.Constants;
 import HCBplugins.DTO.FieldParameters;
 import HCBplugins.DTO.RequestParameters;
+import HCBplugins.DTO.FieldOptions;
 import com.atlassian.jira.issue.context.IssueContextImpl;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.customfields.option.Option;
@@ -20,8 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Objects;
-
-import static HCBplugins.Constants.*;
 
 /**
  * class for manging customfield options trough Jira Java API by handling the
@@ -81,14 +80,14 @@ public class FieldOptionsService {
         }
         String action = fieldOptions.getRequestParameters().getAction();
         switch (action) {
-            case (DEFAULT_RECEIVED): {
+            case (Constants.DEFAULT_RECEIVED): {
                 logger.error("shutting down postOption cuz action parameter not provided");
                 return fieldOptions;
             }
-            case (ADD): {
+            case (Constants.ADD): {
                 logger.info("trying to add new Option");
                 String newOptionValue = fieldOptions.getRequestParameters().getNewOption();
-                if (newOptionValue.equals(DEFAULT_RECEIVED)) {
+                if (newOptionValue.equals(Constants.DEFAULT_RECEIVED)) {
                     logger.error("shutting down postOption cuz newOption not provided");
                     return fieldOptions;
                 }
@@ -109,7 +108,7 @@ public class FieldOptionsService {
                 initializeOptions(fieldOptions);
                 return fieldOptions;
             }
-            case (DISABLE): {
+            case (Constants.DISABLE): {
                 String optionValue = fieldOptions.getRequestParameters().getNewOption();
                 logger.info("trying to disable option \"{}\"", optionValue);
                 Options options = optionsManager.getOptions(
@@ -119,7 +118,7 @@ public class FieldOptionsService {
                 logger.info("disabled option \"{}\"", optionValue);
                 return fieldOptions;
             }
-            case (ENABLE): {
+            case (Constants.ENABLE): {
                 String optionValue = fieldOptions.getRequestParameters().getNewOption();
                 logger.info("trying to enable option \"{}\"", optionValue);
                 Options options = optionsManager.getOptions(
@@ -286,8 +285,8 @@ public class FieldOptionsService {
         // acquiring string representation
         fieldOptions.setFieldOptionsString(options.toString());
         // and array representation
-        fieldOptions.setFieldOptionsArr(getStringArrayFromOptionsObject(options));
-        // fieldOptions.setFieldOptionsArr((String[]) options.toArray());
+        // fieldOptions.setFieldOptionsArr(getStringArrayFromOptionsObject(options));
+         fieldOptions.setFieldOptionsArr(options.stream().map(op -> op.getValue()).toArray(String[]::new));
         logger.info("field options are {}", fieldOptions.getFieldOptionsString());
     }
 
