@@ -16,7 +16,7 @@
     <resource type="download" name="HCBplugins.css" location="/css/HCBplugins.css"/>
     <resource type="download" name="HCBplugins.js" location="/js/HCBplugins.js"/>
     <resource type="download" name="images/" location="/images"/>
-    <context>HCBplugins</context>
+    <context>ru.homecredit</context>
   </web-resource>
   <rest name="Cf Opt Change" i18n-name-key="cf-opt-change.name" key="cf-opt-change" path="/cfoptchange" version="1.0">
     <description key="cf-opt-change.description">The Cf Opt Change Plugin</description>

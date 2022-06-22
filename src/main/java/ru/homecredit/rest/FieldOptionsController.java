@@ -1,6 +1,6 @@
-package HCBplugins.rest;
+package ru.homecredit.rest;
 
-import HCBplugins.DTO.FieldOptions;
+import ru.homecredit.DTO.FieldOptions;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.project.ProjectManager;
@@ -36,6 +36,7 @@ public class FieldOptionsController {
                                   OptionsManager optionsManager,
                                   PluginSettingsFactory pluginSettingsFactory) {
         logger.info("starting FieldOptionsController instance construction");
+        logger.warn(FieldOptionsController.class.getName());
         fieldOptionsService = new FieldOptionsService(fieldManager,
                                                       projectManager,
                                                       optionsManager,

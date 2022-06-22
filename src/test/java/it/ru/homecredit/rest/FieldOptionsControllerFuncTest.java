@@ -1,6 +1,6 @@
-package it.HCBplugins.rest;
+package it.ru.homecredit.rest;
 
-import HCBplugins.rest.FieldOptionsXML;
+import ru.homecredit.rest.FieldOptionsXML;
 import org.apache.wink.client.Resource;
 import org.apache.wink.client.RestClient;
 import org.junit.After;

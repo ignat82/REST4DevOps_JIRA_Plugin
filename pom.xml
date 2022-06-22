@@ -3,8 +3,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>HCBplugins</groupId>
-    <artifactId>REST4DevOps</artifactId>
+    <groupId>ru.homecredit</groupId>
+    <artifactId>jira-adapter</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <organization>
         <name>Home Credit Bank</name>
@@ -136,7 +136,12 @@
             <version>1.7.5</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 
         <!--
@@ -198,7 +203,7 @@
                     <instructions>
                         <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
                         <!-- Add package to export here -->
-                        <Export-Package>HCBplugins.api,</Export-Package>
+                        <Export-Package>ru.homecredit.api,</Export-Package>
                         <!-- Add package import here -->
                         <Import-Package>org.springframework.osgi.*;resolution:="optional",
                             org.eclipse.gemini.blueprint.*;resolution:="optional", *

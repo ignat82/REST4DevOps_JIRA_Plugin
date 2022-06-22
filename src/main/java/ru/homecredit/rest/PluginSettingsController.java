@@ -1,4 +1,4 @@
-package HCBplugins.rest;
+package ru.homecredit.rest;
 
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;

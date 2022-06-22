@@ -1,4 +1,4 @@
-package ut.HCBplugins.rest;
+package ut.ru.homecredit.rest;
 
 import org.junit.After;
 import org.junit.Before;

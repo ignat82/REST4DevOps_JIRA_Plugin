@@ -1,10 +1,14 @@
-package HCBplugins.DTO;
+package ru.homecredit.DTO;
 
-import HCBplugins.Constants;
+import lombok.Getter;
+import lombok.Setter;
+import ru.homecredit.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Getter
+@Setter
 public class RequestParameters {
     private final String fieldKey;
     private final String projectKey;
@@ -49,25 +53,5 @@ public class RequestParameters {
              Constants.DEFAULT_RECEIVED,
              Constants.DEFAULT_RECEIVED);
         logger.info("dummy RequestParameters constructed");
-    }
-
-    public String getFieldKey() {
-        return fieldKey;
-    }
-
-    public String getProjectKey() {
-        return projectKey;
-    }
-
-    public String getNewOption() {
-        return newOption;
-    }
-
-    public String getIssueTypeId() {
-        return issueTypeId;
-    }
-
-    public String getAction() {
-        return action;
     }
 }

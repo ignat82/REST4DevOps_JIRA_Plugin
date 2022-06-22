@@ -1,6 +1,6 @@
-package HCBplugins.impl;
+package ru.homecredit.impl;
 
-import HCBplugins.api.MyPluginComponent;
+import ru.homecredit.api.MyPluginComponent;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.project.ProjectManager;

@@ -1,9 +1,9 @@
-package HCBplugins.rest;
+package ru.homecredit.rest;
 
-import HCBplugins.Constants;
-import HCBplugins.DTO.FieldParameters;
-import HCBplugins.DTO.RequestParameters;
-import HCBplugins.DTO.FieldOptions;
+import ru.homecredit.Constants;
+import ru.homecredit.DTO.FieldParameters;
+import ru.homecredit.DTO.RequestParameters;
+import ru.homecredit.DTO.FieldOptions;
 import com.atlassian.jira.issue.context.IssueContextImpl;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.customfields.option.Option;

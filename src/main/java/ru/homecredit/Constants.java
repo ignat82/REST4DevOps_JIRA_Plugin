@@ -1,4 +1,4 @@
-package HCBplugins;
+package ru.homecredit;
 
 /**
  * constants for storing default value for FieldOptions field including

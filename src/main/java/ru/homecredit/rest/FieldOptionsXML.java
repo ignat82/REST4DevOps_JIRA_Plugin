@@ -1,10 +1,10 @@
-package HCBplugins.rest;
+package ru.homecredit.rest;
 
-import HCBplugins.DTO.FieldParameters;
-import HCBplugins.DTO.RequestParameters;
+import ru.homecredit.DTO.FieldParameters;
+import ru.homecredit.DTO.RequestParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import HCBplugins.DTO.FieldOptions;
+import ru.homecredit.DTO.FieldOptions;
 
 import javax.xml.bind.annotation.*;
 import java.util.Arrays;

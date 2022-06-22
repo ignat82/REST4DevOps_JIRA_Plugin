@@ -1,4 +1,4 @@
-package HCBplugins.api;
+package ru.homecredit.api;
 
 public interface MyPluginComponent
 {

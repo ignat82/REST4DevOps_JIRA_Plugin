@@ -1,4 +1,4 @@
-package HCBplugins.rest;
+package ru.homecredit.rest;
 
 
 public class PluginSettings {
