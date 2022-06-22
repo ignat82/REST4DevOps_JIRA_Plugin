@@ -1,9 +1,9 @@
-package it.ru.homecredit;
+package it.ru.homecredit.jiraadapter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import ru.homecredit.api.MyPluginComponent;
+import ru.homecredit.jiraadapter.api.MyPluginComponent;
 import com.atlassian.sal.api.ApplicationProperties;
 
 import static org.junit.Assert.assertEquals;

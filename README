@@ -33,7 +33,7 @@ separated jira customfield keys without whitespaces}
 
 inherited from skeleton plugin tests in
     src\test\java\ut\HCBplugins\rest\CfOptChangeTest.java
-are commented out
+are commented
 
 
 

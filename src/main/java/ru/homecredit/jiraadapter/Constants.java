@@ -1,4 +1,4 @@
-package ru.homecredit;
+package ru.homecredit.jiraadapter;
 
 /**
  * constants for storing default value for FieldOptions field including

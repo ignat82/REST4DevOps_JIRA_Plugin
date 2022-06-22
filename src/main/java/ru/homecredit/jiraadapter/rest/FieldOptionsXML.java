@@ -1,10 +1,9 @@
-package ru.homecredit.rest;
+package ru.homecredit.jiraadapter.rest;
 
-import ru.homecredit.DTO.FieldParameters;
-import ru.homecredit.DTO.RequestParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.homecredit.DTO.FieldOptions;
+import lombok.extern.slf4j.Slf4j;
+import ru.homecredit.jiraadapter.DTO.FieldOptions;
+import ru.homecredit.jiraadapter.DTO.FieldParameters;
+import ru.homecredit.jiraadapter.DTO.RequestParameters;
 
 import javax.xml.bind.annotation.*;
 import java.util.Arrays;
@@ -14,6 +13,7 @@ import java.util.Arrays;
  */
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Slf4j
 public class FieldOptionsXML {
 
     @XmlAttribute
@@ -37,12 +37,9 @@ public class FieldOptionsXML {
     private String[] fieldOptions;
     @XmlElement(name = "result")
     private String result;
-    private static final Logger logger = LoggerFactory.
-            getLogger(FieldOptionsXML.class.getName());
-
 
     public FieldOptionsXML() {
-        logger.info("starting FieldOptionsXML instance construction");
+        log.info("starting FieldOptionsXML instance construction");
     }
 
     /**
@@ -50,7 +47,7 @@ public class FieldOptionsXML {
      * @param fieldOptions - transport object
      */
     public FieldOptionsXML(FieldOptions fieldOptions) {
-        logger.info("packing response to XML...");
+        log.trace("packing response to XML...");
         RequestParameters requestParameters = fieldOptions.getRequestParameters();
         fieldKey = requestParameters.getFieldKey();
         projectKey = requestParameters.getProjectKey();

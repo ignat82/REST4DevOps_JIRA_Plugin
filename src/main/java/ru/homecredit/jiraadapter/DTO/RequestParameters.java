@@ -1,29 +1,27 @@
-package ru.homecredit.DTO;
+package ru.homecredit.jiraadapter.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.homecredit.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ru.homecredit.jiraadapter.Constants;
 
 @Getter
 @Setter
+@Slf4j
 public class RequestParameters {
     private final String fieldKey;
     private final String projectKey;
     private final String issueTypeId;
     private final String newOption;
     private final String action;
-    private static final Logger logger = LoggerFactory.
-         getLogger(RequestParameters.class.getName());
 
     public RequestParameters(String fieldKey,
                              String projectKey,
                              String issueTypeId,
                              String newOption,
                              String action) {
-        logger.info("RequestParameters constructed");
+        log.trace("RequestParameters constructed");
         this.fieldKey = (!StringUtils.isEmpty(fieldKey))
                 ? fieldKey : Constants.DEFAULT_RECEIVED;
         this.projectKey = (!StringUtils.isEmpty(projectKey))
@@ -52,6 +50,16 @@ public class RequestParameters {
              Constants.DEFAULT_RECEIVED,
              Constants.DEFAULT_RECEIVED,
              Constants.DEFAULT_RECEIVED);
-        logger.info("dummy RequestParameters constructed");
+        log.trace("dummy RequestParameters constructed");
     }
+
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("fieldKey = ").append(fieldKey).append("; projectKey = ").
+                append(projectKey).append("; issueTypeId = ").append(issueTypeId).
+                             append("; new option = ").append(newOption).
+                             append("; action = ").append(action).append(".");
+        return stringBuilder.toString();
+    }
+
 }

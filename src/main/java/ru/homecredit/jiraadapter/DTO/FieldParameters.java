@@ -1,9 +1,9 @@
-package ru.homecredit.DTO;
+package ru.homecredit.jiraadapter.DTO;
 
 import com.atlassian.jira.issue.fields.config.FieldConfig;
 import lombok.Data;
 
-import static ru.homecredit.Constants.DEFAULT_ACQUIRED;
+import static ru.homecredit.jiraadapter.Constants.DEFAULT_ACQUIRED;
 
 @Data
 public class FieldParameters {

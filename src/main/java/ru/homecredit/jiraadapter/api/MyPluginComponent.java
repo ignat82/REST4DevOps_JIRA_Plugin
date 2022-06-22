@@ -1,4 +1,4 @@
-package ru.homecredit.api;
+package ru.homecredit.jiraadapter.api;
 
 public interface MyPluginComponent
 {

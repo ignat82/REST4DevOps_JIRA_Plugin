@@ -1,4 +1,4 @@
-package ru.homecredit.rest;
+package ru.homecredit.jiraadapter.rest;
 
 
 public class PluginSettings {

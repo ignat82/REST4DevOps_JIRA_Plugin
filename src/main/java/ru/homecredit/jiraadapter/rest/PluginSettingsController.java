@@ -1,9 +1,8 @@
-package ru.homecredit.rest;
+package ru.homecredit.jiraadapter.rest;
 
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,18 +19,17 @@ import javax.ws.rs.core.Response;
  */
 @Path("/settings")
 @Named
+@Slf4j
 public class PluginSettingsController {
     private final PluginSettingsService pluginSettingsService;
-    private final static Logger logger = LoggerFactory
-            .getLogger(PluginSettingsController.class.getName());
 
     /**
-     * constructor just initializes logger and acquires settingsService object
+     * constructor just initializes log and acquires settingsService object
      * @param pluginSettingsFactory - jira bean to be injected by spring
      */
     @Inject
     public PluginSettingsController(PluginSettingsFactory pluginSettingsFactory) {
-        logger.info("starting FieldOptionsController instance construction");
+        log.info("starting FieldOptionsController instance construction");
         pluginSettingsService = new PluginSettingsService(pluginSettingsFactory);
     }
 
@@ -44,8 +42,8 @@ public class PluginSettingsController {
     @AnonymousAllowed
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response postSettings(String requestBody) {
-        logger.info("********** starting postSettings method ************");
-        logger.info("request body received is - {}", requestBody);
+        log.info("********** starting postSettings method ************");
+        log.trace("request body received is - {}", requestBody);
         return ((requestBody == null || requestBody.equals("")))
                 ? Response.ok(pluginSettingsService.getSettings()).build()
                 : Response.ok(pluginSettingsService.saveSettings(requestBody)).build();

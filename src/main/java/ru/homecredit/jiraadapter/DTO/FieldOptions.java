@@ -1,20 +1,17 @@
-package ru.homecredit.DTO;
+package ru.homecredit.jiraadapter.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.homecredit.Constants;
+import lombok.extern.slf4j.Slf4j;
+import ru.homecredit.jiraadapter.Constants;
 
 /**
  * transport class to handle single REST request to /options endpoint
  */
 @Getter
 @Setter
+@Slf4j
 public class FieldOptions {
-
-    private static final Logger logger = LoggerFactory.
-          getLogger(FieldOptions.class.getName());
 
     private RequestParameters requestParameters;
     private FieldParameters fieldParameters;
@@ -24,14 +21,14 @@ public class FieldOptions {
 
     public FieldOptions() {
         this(new RequestParameters());
-        logger.info("dummy FieldOptions constructed");
+        log.trace("dummy FieldOptions constructed");
     }
 
     /**
      *
      */
     public FieldOptions(RequestParameters requestParameters) {
-        logger.info("starting FieldOptions instance construction");
+        log.trace("starting FieldOptions instance construction");
         this.requestParameters = requestParameters;
     }
 }

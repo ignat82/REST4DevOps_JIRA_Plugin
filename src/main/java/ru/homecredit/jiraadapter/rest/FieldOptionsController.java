@@ -1,13 +1,12 @@
-package ru.homecredit.rest;
+package ru.homecredit.jiraadapter.rest;
 
-import ru.homecredit.DTO.FieldOptions;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import ru.homecredit.jiraadapter.DTO.FieldOptions;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,10 +19,9 @@ import javax.ws.rs.core.Response;
  */
 @Path("/options")
 @Named
+@Slf4j
 public class FieldOptionsController {
 
-    private static final Logger logger = LoggerFactory.
-            getLogger(FieldOptionsController.class);
     private final FieldOptionsService fieldOptionsService;
 
     /**
@@ -35,8 +33,8 @@ public class FieldOptionsController {
                                   ProjectManager projectManager,
                                   OptionsManager optionsManager,
                                   PluginSettingsFactory pluginSettingsFactory) {
-        logger.info("starting FieldOptionsController instance construction");
-        logger.warn(FieldOptionsController.class.getName());
+        log.trace("starting FieldOptionsController instance construction");
+        log.warn(FieldOptionsController.class.getName());
         fieldOptionsService = new FieldOptionsService(fieldManager,
                                                       projectManager,
                                                       optionsManager,
@@ -63,7 +61,7 @@ public class FieldOptionsController {
     public Response doGet(@QueryParam("fieldKey") String fieldKey,
                           @QueryParam("projKey") String projKey,
                           @QueryParam("issueTypeId") String issueTypeId) {
-        logger.info("************* starting doGet method... ************");
+        log.trace("************* starting doGet method... ************");
         return Response.ok(new FieldOptionsXML(
                 fieldOptionsService.initializeFieldOptions(
                         fieldKey, projKey, issueTypeId))).build();
@@ -82,7 +80,7 @@ public class FieldOptionsController {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     // rename to addOption ??
     public Response doPost(String requestBody) {
-        logger.info("************ starting doPost method... **************");
+        log.trace("************ starting doPost method... **************");
         FieldOptions fieldOptions = fieldOptionsService.postOption(requestBody);
         return (fieldOptions == null)
             ? Response.ok("something goes wrong. Check log file").build()

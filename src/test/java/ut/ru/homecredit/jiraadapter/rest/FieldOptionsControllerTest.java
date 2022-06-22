@@ -1,4 +1,4 @@
-package ut.ru.homecredit.rest;
+package ut.ru.homecredit.jiraadapter.rest;
 
 import org.junit.After;
 import org.junit.Before;
