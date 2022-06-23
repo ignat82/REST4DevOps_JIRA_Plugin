@@ -2,15 +2,15 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>HCBplugins</groupId>
-    <artifactId>REST4DevOps</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <groupId>ru.homecredit</groupId>
+    <artifactId>jira-adapter</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
     <organization>
         <name>Home Credit Bank</name>
         <url>http://www.homecredit.ru/</url>
     </organization>
-    <name>REST4DevOps</name>
-    <description>This is the HCBplugins:REST4DevOps plugin for Atlassian JIRA.</description>
+    <name>jira-adapter</name>
+    <description>This is the plugin for Atlassian JIRA. Rest adapter.</description>
     <packaging>atlassian-plugin</packaging>
     <dependencies>
         <dependency>
@@ -135,6 +135,12 @@
             <version>1.7.5</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <!--
             3 following dependecies are for hibernate validation
@@ -188,13 +194,18 @@
                         </pluginArtifact>
                     </pluginArtifacts>
                     -->
+                    <jvmArgs>-Xmx2g</jvmArgs>
                     <enableQuickReload>true</enableQuickReload>
+                    <systemPropertyVariables><!-- missing in the generated pom.xml altogether, not sure why -->
+                        <atlassian.dev.mode>false</atlassian.dev.mode><!-- default: true -->
+                        <atlassian.disable.caches>false</atlassian.disable.caches><!-- default: true when the one above is true -->
+                    </systemPropertyVariables>
                     <!-- See here for an explanation of default instructions: -->
                     <!-- https://developer.atlassian.com/docs/advanced-topics/configuration-of-instructions-in-atlassian-plugins -->
                     <instructions>
                         <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
                         <!-- Add package to export here -->
-                        <Export-Package>HCBplugins.api,</Export-Package>
+                        <Export-Package>ru.homecredit.jiraadapter.api</Export-Package>
                         <!-- Add package import here -->
                         <Import-Package>org.springframework.osgi.*;resolution:="optional", org.eclipse.gemini.blueprint.*;resolution:="optional", *</Import-Package>
                         <!-- Ensure plugin is spring powered -->

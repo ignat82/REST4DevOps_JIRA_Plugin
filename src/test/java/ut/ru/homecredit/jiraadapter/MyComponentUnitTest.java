@@ -1,8 +1,8 @@
-package ut.HCBplugins;
+package ut.ru.homecredit.jiraadapter;
 
 import org.junit.Test;
-import HCBplugins.api.MyPluginComponent;
-import HCBplugins.impl.MyPluginComponentImpl;
+import ru.homecredit.jiraadapter.api.MyPluginComponent;
+import ru.homecredit.jiraadapter.impl.MyPluginComponentImpl;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,7 +12,7 @@ public class MyComponentUnitTest
     public void testMyName()
     {
         MyPluginComponent component = new MyPluginComponentImpl(null, null,
-                null, null, null, null);
+                null, null, null);
         assertEquals("names do not match!", "myComponent",component.getName());
     }
 }

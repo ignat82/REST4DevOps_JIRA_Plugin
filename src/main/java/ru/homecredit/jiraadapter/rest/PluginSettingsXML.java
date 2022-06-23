@@ -1,7 +1,6 @@
-package HCBplugins.rest;
+package ru.homecredit.jiraadapter.rest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
@@ -9,15 +8,14 @@ import java.util.List;
 
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Slf4j
 public final class PluginSettingsXML {
-    private static final Logger       logger = LoggerFactory.
-            getLogger(PluginSettingsXML.class.getName());
     @XmlElementWrapper(name = "editableFields")
     @XmlElement(name = "field")
     private              List<String> editableFields;
 
     public PluginSettingsXML() {
-        logger.info("starting PluginSettingsXML instance construction");
+        log.info("starting PluginSettingsXML instance construction");
     }
 
     public List<String> getEditableFields()
