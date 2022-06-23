@@ -38,6 +38,7 @@
   <web-item name="configuration" i18n-name-key="rest-4-dev-ops-web-item.name" key="rest-4-dev-ops-web-item" section="admin_plugins_menu/rest-4-dev-ops" weight="1000">
     <description key="rest-4-dev-ops-web-item.description">configuration</description>
     <label key="rest-4-dev-ops-web-item.label"></label>  
-    <link linkId="rest-4-dev-ops-web-item-link">/secure/WebWorkAction.jspa</link> 
+    <link linkId="rest-4-dev-ops-web-item-link">/secure/WebWorkAction.jspa</link>
+
   </web-item>
 </atlassian-plugin>
