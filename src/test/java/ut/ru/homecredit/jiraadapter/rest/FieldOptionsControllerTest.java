@@ -1,4 +1,4 @@
-package ut.HCBplugins.rest;
+package ut.ru.homecredit.jiraadapter.rest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,7 +40,7 @@ public class FieldOptionsControllerTest {
         /*
         FieldOptionsController resource = new FieldOptionsController();
 
-        Response response = resource.postOption("customfield_10000"
+        Response response = resource.doPost("customfield_10000"
                 , "TES", "new10");
         final FieldOptionsXML XMLResponse = (FieldOptionsXML) response.getEntity();
 
