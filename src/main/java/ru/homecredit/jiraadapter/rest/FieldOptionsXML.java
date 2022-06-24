@@ -1,9 +1,9 @@
 package ru.homecredit.jiraadapter.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.homecredit.jiraadapter.DTO.FieldOptions;
-import ru.homecredit.jiraadapter.DTO.FieldParameters;
-import ru.homecredit.jiraadapter.DTO.RequestParameters;
+import ru.homecredit.jiraadapter.dto.FieldOptions;
+import ru.homecredit.jiraadapter.dto.FieldParameters;
+import ru.homecredit.jiraadapter.dto.RequestParameters;
 
 import javax.xml.bind.annotation.*;
 import java.util.Arrays;

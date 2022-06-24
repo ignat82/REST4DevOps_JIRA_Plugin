@@ -1,5 +1,6 @@
-package ru.homecredit.jiraadapter.DTO;
+package ru.homecredit.jiraadapter.dto;
 
+import com.google.gson.annotations.Expose;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ public class RequestParameters {
     private final String projectKey;
     private final String issueTypeId;
     private final String newOption;
+    @Expose(serialize = false, deserialize = false)
     private final String action;
 
     public RequestParameters(String fieldKey,
@@ -61,5 +63,4 @@ public class RequestParameters {
                              append("; action = ").append(action).append(".");
         return stringBuilder.toString();
     }
-
 }

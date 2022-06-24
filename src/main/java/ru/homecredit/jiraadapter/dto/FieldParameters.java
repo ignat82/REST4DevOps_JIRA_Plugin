@@ -1,17 +1,21 @@
-package ru.homecredit.jiraadapter.DTO;
+package ru.homecredit.jiraadapter.dto;
 
 import com.atlassian.jira.issue.fields.config.FieldConfig;
-import lombok.Data;
+import com.google.gson.annotations.Expose;
+import lombok.Getter;
+import lombok.Setter;
 
 import static ru.homecredit.jiraadapter.Constants.DEFAULT_ACQUIRED;
 
-@Data
+@Setter
+@Getter
+// @Data
 public class FieldParameters {
     private String fieldName = DEFAULT_ACQUIRED;
     private String projectName = DEFAULT_ACQUIRED;
+    @Expose(serialize = false, deserialize = false)
     private FieldConfig fieldConfig;
     private String fieldConfigName = DEFAULT_ACQUIRED;
-
     private boolean validContext;
     private boolean isPermittedToEdit;
 }

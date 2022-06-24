@@ -1,4 +1,4 @@
-package ru.homecredit.jiraadapter.DTO;
+package ru.homecredit.jiraadapter.dto;
 
 import lombok.Getter;
 import lombok.Setter;

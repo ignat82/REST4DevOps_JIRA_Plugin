@@ -1,11 +1,8 @@
-package ut.HCBplugins.webwork;
+package ut.ru.homecredit.jiraadapter;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import HCBplugins.webwork.WebWorkAction;
-
-import static org.mockito.Mockito.*;
 
 /**
  * @since 3.5

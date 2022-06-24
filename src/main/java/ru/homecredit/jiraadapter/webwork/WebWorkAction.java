@@ -1,4 +1,4 @@
-package HCBplugins.webwork;
+package ru.homecredit.jiraadapter.webwork;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

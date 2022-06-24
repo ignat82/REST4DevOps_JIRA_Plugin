@@ -2,7 +2,6 @@ package ru.homecredit.jiraadapter.rest;
 
 import com.atlassian.jira.issue.context.IssueContextImpl;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
-import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
 import com.atlassian.jira.issue.fields.ConfigurableField;
 import com.atlassian.jira.issue.fields.FieldManager;
@@ -14,9 +13,9 @@ import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import lombok.extern.slf4j.Slf4j;
 import ru.homecredit.jiraadapter.Constants;
-import ru.homecredit.jiraadapter.DTO.FieldOptions;
-import ru.homecredit.jiraadapter.DTO.FieldParameters;
-import ru.homecredit.jiraadapter.DTO.RequestParameters;
+import ru.homecredit.jiraadapter.dto.FieldOptions;
+import ru.homecredit.jiraadapter.dto.FieldParameters;
+import ru.homecredit.jiraadapter.dto.RequestParameters;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -55,16 +54,14 @@ public class FieldOptionsService {
     }
 
     /**
-     * method for appending new option to customfield
-     * @param requestBody json string with parameters from POST request body
+     *
      * @return FieldOptions transport object
      */
-
-
     public FieldOptions postOption(String requestBody) {
-        log.info("starting postOption method with initializing FieldOptions");
-        FieldOptions fieldOptions = initializeFieldOptions(requestBody);
-        log.trace("getting fieldParameters from FieldOptions");
+        log.info("starting postOption method with extraction parameters from request body");
+        RequestParameters requestParameters = extractRequestParameters(requestBody);
+        log.info("initializing FieldOptions");
+        FieldOptions fieldOptions = initializeFieldOptions(requestParameters);
         if (fieldOptions == null) {
             log.error("shutting down postOption cuz fieldOptions object wasn't constructed");
             return null;
@@ -135,50 +132,22 @@ public class FieldOptionsService {
         return fieldOptions;
     }
 
-
     /**
      * method to acquire the options of given field in given context
-     * @param fieldKey - jira field key
-     * @param projectKey - jira project key
-     * @param issueTypeId - jira issue type id
+     * @param requestParameters
      * @return - FieldOptions transport object
      */
-    public FieldOptions initializeFieldOptions(String fieldKey,
-                                               String projectKey,
-                                               String issueTypeId) {
+    public FieldOptions initializeFieldOptions(RequestParameters requestParameters) {
         log.info("starting initializeFieldOptions" +
-                            "(String fieldKey, String projectKey, String issueTypeId) method");
-        RequestParameters requestParameters =
-                new RequestParameters(fieldKey, projectKey, issueTypeId);
+                            "(RequestParameters requestParameters) method");
+        FieldOptions fieldOptions = new FieldOptions();
+        fieldOptions.setRequestParameters(requestParameters);
         FieldParameters fieldParameters = initializeFieldParameters(requestParameters);
         if (fieldParameters == null) {
-            log.error("shutting down initializeFieldOptions method cuz" + "" +
-                                 "fieldParameters==null");
-            return null;
+            log.error("shutting down initializeFieldOptions method cuz fieldParameters==null");
+            fieldOptions.setFieldParameters(new FieldParameters());
+            return fieldOptions;
         }
-        FieldOptions fieldOptions = new FieldOptions();
-        fieldOptions.setRequestParameters(requestParameters);
-        fieldOptions.setFieldParameters(fieldParameters);
-        initializeOptions(fieldOptions);
-        return fieldOptions;
-    }
-
-    /**
-     * same method but for POST requests, which parameters are received in
-     * @param requestBody - json string of POST request parameters
-     * @return FieldOptions transport object
-     */
-    public FieldOptions initializeFieldOptions(String requestBody) {
-        log.info("starting initializeFieldOptions(String requestBody) method");
-        RequestParameters requestParameters = extractRequestParameters(requestBody);
-        FieldParameters fieldParameters = initializeFieldParameters(requestParameters);
-        if (requestParameters == null || fieldParameters == null) {
-            log.error("shutting down initializeFieldOptions method cuz" + "" +
-                 "either requestParameters==null or fieldParameters==null");
-            return null;
-        }
-        FieldOptions fieldOptions = new FieldOptions();
-        fieldOptions.setRequestParameters(requestParameters);
         fieldOptions.setFieldParameters(fieldParameters);
         initializeOptions(fieldOptions);
         return fieldOptions;
@@ -211,10 +180,10 @@ public class FieldOptionsService {
         log.info("starting initializeFieldParameters method");
         FieldParameters fieldParameters = new FieldParameters();
         try {
+            log.info("fieldKey from requestParameters is {}", requestParameters.getFieldKey());
             ConfigurableField field = fieldManager.
                  getConfigurableField(requestParameters.getFieldKey());
-            log.trace("field {} acquired as {}", requestParameters.getFieldKey(),
-                     fieldParameters.getFieldName());
+            log.trace("field {} acquired as {}", requestParameters.getFieldKey(), field.getName());
             fieldParameters.setFieldName(field.getName());
             Project project = projectManager.
                   getProjectByCurrentKeyIgnoreCase(requestParameters.getProjectKey());
@@ -291,18 +260,4 @@ public class FieldOptionsService {
         log.trace("field options are {}", fieldOptions.getFieldOptionsString());
     }
 
-
-    /**
-     * helper method to convert Options object to String array
-     * @param fieldOptions field options object
-     * @return array of String with field options values
-     */
-    private String[] getStringArrayFromOptionsObject(Options fieldOptions) {
-        String[] fieldOptionsArr = new String[fieldOptions.size()];
-        int i = 0;
-        for (Option option : fieldOptions) {
-            fieldOptionsArr[i++] = option.getValue();
-        }
-        return fieldOptionsArr;
-    }
 }
