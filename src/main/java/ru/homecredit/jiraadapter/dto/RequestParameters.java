@@ -1,6 +1,5 @@
 package ru.homecredit.jiraadapter.dto;
 
-import com.google.gson.annotations.Expose;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +14,20 @@ public class RequestParameters {
     private final String projectKey;
     private final String issueTypeId;
     private final String newOption;
-    @Expose(serialize = false, deserialize = false)
-    private final String action;
+    private final Action action;
+
+    public enum Action {
+        ADD ("add"),
+        ENABLE ("enable"),
+        DISABLE ("disable"),
+        NOT_RECOGNIZED ("not recognized");
+
+        private final String stringAction;
+
+        Action(String stringAction) {
+            this.stringAction = stringAction;
+        }
+    }
 
     public RequestParameters(String fieldKey,
                              String projectKey,
@@ -32,8 +43,19 @@ public class RequestParameters {
                 ? issueTypeId : Constants.DEFAULT_RECEIVED;
         this.newOption = (!StringUtils.isEmpty(newOption))
                 ? newOption : Constants.DEFAULT_RECEIVED;
-        this.action = (!StringUtils.isEmpty(action))
-                ? action : Constants.DEFAULT_RECEIVED;
+        this.action = actionFromString(action);
+    }
+
+    private Action actionFromString(String actionString) {
+        if (StringUtils.isEmpty(actionString)) {
+            return Action.NOT_RECOGNIZED;
+        }
+        switch (StringUtils.lowerCase(actionString)) {
+            case "enable": return Action.ENABLE;
+            case "disable": return Action.DISABLE;
+            case "add": return Action.ADD;
+            default: return Action.NOT_RECOGNIZED;
+        }
     }
 
     public RequestParameters(String fieldKey,

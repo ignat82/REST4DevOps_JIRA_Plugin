@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import ru.homecredit.jiraadapter.dto.FieldOptions;
-import ru.homecredit.jiraadapter.dto.FieldParameters;
 import ru.homecredit.jiraadapter.dto.RequestParameters;
 
 import javax.inject.Inject;
@@ -27,6 +26,7 @@ import javax.ws.rs.core.Response;
 public class FieldOptionsController {
 
     private final FieldOptionsService fieldOptionsService;
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * constructor initialises logger and receives Jira objects managers trough
@@ -60,42 +60,19 @@ public class FieldOptionsController {
      */
     @GET
     @AnonymousAllowed
-    @Produces({MediaType.APPLICATION_JSON/*, MediaType.APPLICATION_XML*/})
-    // rename to addOption ??
+    @Produces(MediaType.APPLICATION_JSON)
     public Response doGet(@QueryParam("fieldKey") String fieldKey,
                           @QueryParam("projKey") String projKey,
                           @QueryParam("issueTypeId") String issueTypeId) {
         log.trace("************* starting doGet method... ************");
-        /*
-        return Response.ok(new FieldOptionsXML(
-                fieldOptionsService.initializeFieldOptions(
-                        new RequestParameters(fieldKey,
-                                              projKey,
-                                              issueTypeId)))).build();
-        */
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         FieldOptions fieldOptions = fieldOptionsService.initializeFieldOptions(
                 new RequestParameters(fieldKey,
                                       projKey,
                                       issueTypeId));
         log.info("field Options constructed");
-        log.info(gson.toJson(fieldOptions.getRequestParameters()));
-        log.info("RequestParameters serialized to JSON");
-        log.info(gson.toJson(new FieldParameters()));
-        log.info("dummy FieldParameters serialized to JSON");
-        FieldParameters fieldParameters = fieldOptions.getFieldParameters();
-        log.info("fieldParameters from fieldOptions is null - {}", (fieldParameters == null));
-        log.info("fieldParameters.fieldConfig {}",fieldParameters.getFieldConfig());
-        log.info("fieldParameters.fieldConfigName {}",fieldParameters.getFieldConfigName());
-        log.info("fieldParameters.fieldName {}",fieldParameters.getFieldName());
-        log.info("fieldParameters.projectName {}",fieldParameters.getProjectName());
-        log.info("fieldParameters permittedToEdit - {}", fieldParameters.isPermittedToEdit());
-        log.info("fieldParameters isValidContext - {}", fieldParameters.isValidContext());
-        // string 96 dies with RTE if comment out string 95
-        // fieldParameters.setFieldConfig(null);
-        log.info(gson.toJson(fieldParameters));
-        log.info("FieldParameters JSON");
-        return Response.ok(gson.toJson(fieldOptions.getRequestParameters())).build();
+        log.info(gson.toJson(new FieldOptionsXML(fieldOptions)));
+        log.info("converted to JSON");
+        return Response.ok(gson.toJson(new FieldOptionsXML(fieldOptions))).build();
     }
 
     /**
@@ -107,13 +84,13 @@ public class FieldOptionsController {
      */
     @POST
     @AnonymousAllowed
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
     // rename to addOption ??
     public Response doPost(String requestBody) {
         log.trace("************ starting doPost method... **************");
         FieldOptions fieldOptions = fieldOptionsService.postOption(requestBody);
         return (fieldOptions == null)
             ? Response.ok("something goes wrong. Check log file").build()
-            : Response.ok(new FieldOptionsXML(fieldOptions)).build();
+            : Response.ok(gson.toJson(new FieldOptionsXML(fieldOptions))).build();
     }
 }

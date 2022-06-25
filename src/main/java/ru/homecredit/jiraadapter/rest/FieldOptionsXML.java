@@ -1,12 +1,13 @@
 package ru.homecredit.jiraadapter.rest;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.homecredit.jiraadapter.dto.FieldOptions;
 import ru.homecredit.jiraadapter.dto.FieldParameters;
 import ru.homecredit.jiraadapter.dto.RequestParameters;
 
 import javax.xml.bind.annotation.*;
-import java.util.Arrays;
 
 /**
  * class to pack FieldOptions transport object to xml response
@@ -14,6 +15,8 @@ import java.util.Arrays;
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
 @Slf4j
+@Getter
+@Setter
 public class FieldOptionsXML {
 
     @XmlAttribute
@@ -53,7 +56,7 @@ public class FieldOptionsXML {
         projectKey = requestParameters.getProjectKey();
         issueTypeId = requestParameters.getIssueTypeId();
         newOption = requestParameters.getNewOption();
-        action = requestParameters.getAction();
+        action = requestParameters.getAction().toString();
 
         FieldParameters fieldParameters = fieldOptions.getFieldParameters();
         fieldName = fieldParameters.getFieldName();
@@ -64,35 +67,4 @@ public class FieldOptionsXML {
         result = Boolean.toString(fieldOptions.isOptionAdded());
     }
 
-    public String getFieldKey() {
-        return fieldKey;
-    }
-
-    public String getProjectKey() {
-        return projectKey;
-    }
-
-    public String getNewOption() {
-        return newOption;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public String getFieldConfigName() {
-        return fieldConfigName;
-    }
-
-    public String[] getFieldOptions() {
-        return Arrays.copyOf(fieldOptions, fieldOptions.length);
-    }
-
-    public String getResult() {
-        return result;
-    }
 }

@@ -2,6 +2,8 @@ package ru.homecredit.jiraadapter.rest;
 
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -22,6 +24,7 @@ import javax.ws.rs.core.Response;
 @Slf4j
 public class PluginSettingsController {
     private final PluginSettingsService pluginSettingsService;
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * constructor just initializes log and acquires settingsService object
@@ -40,12 +43,14 @@ public class PluginSettingsController {
      */
     @POST
     @AnonymousAllowed
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
     public Response postSettings(String requestBody) {
         log.info("********** starting postSettings method ************");
         log.trace("request body received is - {}", requestBody);
         return ((requestBody == null || requestBody.equals("")))
-                ? Response.ok(pluginSettingsService.getSettings()).build()
-                : Response.ok(pluginSettingsService.saveSettings(requestBody)).build();
+                ? Response.ok(gson.toJson(
+                        pluginSettingsService.getSettings())).build()
+                : Response.ok(gson.toJson(
+                        pluginSettingsService.saveSettings(requestBody))).build();
     }
 }

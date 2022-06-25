@@ -11,6 +11,8 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import ru.homecredit.jiraadapter.Constants;
 import ru.homecredit.jiraadapter.dto.FieldOptions;
@@ -31,6 +33,7 @@ public class FieldOptionsService {
     private final ProjectManager projectManager;
     private final OptionsManager optionsManager;
     private final PluginSettingsService pluginSettingsService;
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * constructor just receives and saves in fields the instances of Jira beans,
@@ -74,13 +77,12 @@ public class FieldOptionsService {
             log.error("shutting down postOption cuz invalid FieldContext");
             return fieldOptions;
         }
-        String action = fieldOptions.getRequestParameters().getAction();
-        switch (action) {
-            case (Constants.DEFAULT_RECEIVED): {
+        switch (fieldOptions.getRequestParameters().getAction()) {
+            case NOT_RECOGNIZED: {
                 log.error("shutting down postOption cuz action parameter not provided");
                 return fieldOptions;
             }
-            case (Constants.ADD): {
+            case ADD: {
                 log.trace("trying to add new Option");
                 String newOptionValue = fieldOptions.getRequestParameters().getNewOption();
                 if (newOptionValue.equals(Constants.DEFAULT_RECEIVED)) {
@@ -104,17 +106,23 @@ public class FieldOptionsService {
                 initializeOptions(fieldOptions);
                 return fieldOptions;
             }
-            case (Constants.DISABLE): {
+            case DISABLE: {
                 String optionValue = fieldOptions.getRequestParameters().getNewOption();
                 log.trace("trying to disable option \"{}\"", optionValue);
                 Options options = optionsManager.getOptions(
                         fieldOptions.getFieldParameters().getFieldConfig()
                 );
+                if (options.getOptionForValue(optionValue, null) != null) {
+                    options.getOptionForValue(optionValue, null).setDisabled(false);
+                    log.trace("enabled option \"{}\"", optionValue);
+                } else {
+                    log.error("option {} seems not to exist. shutting down", optionValue);
+                }
                 options.getOptionForValue(optionValue, null).setDisabled(true);
                 log.trace("disabled option \"{}\"", optionValue);
                 return fieldOptions;
             }
-            case (Constants.ENABLE): {
+            case ENABLE: {
                 String optionValue = fieldOptions.getRequestParameters().getNewOption();
                 log.trace("trying to enable option \"{}\"", optionValue);
                 Options options = optionsManager.getOptions(
