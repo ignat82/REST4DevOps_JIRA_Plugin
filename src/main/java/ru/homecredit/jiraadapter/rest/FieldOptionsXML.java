@@ -8,6 +8,7 @@ import ru.homecredit.jiraadapter.dto.FieldParameters;
 import ru.homecredit.jiraadapter.dto.RequestParameters;
 
 import javax.xml.bind.annotation.*;
+import java.util.Map;
 
 /**
  * class to pack FieldOptions transport object to xml response
@@ -38,6 +39,9 @@ public class FieldOptionsXML {
     @XmlElementWrapper(name = "fieldOptions")
     @XmlElement(name = "option")
     private String[] fieldOptions;
+    @XmlElementWrapper(name = "isDisabled")
+    @XmlElement(name = "disabled")
+    private Map<String, Boolean> isDisabled;
     @XmlElement(name = "result")
     private String result;
 
@@ -62,7 +66,7 @@ public class FieldOptionsXML {
         fieldName = fieldParameters.getFieldName();
         projectName = fieldParameters.getProjectName();
         fieldConfigName = fieldParameters.getFieldConfigName();
-        // fieldOptionsString = mutableOptionsList.getFieldOptionsString();
+        isDisabled = fieldOptions.getIsDisabled();
         this.fieldOptions = fieldOptions.getFieldOptionsArr();
         result = Boolean.toString(fieldOptions.isOptionAdded());
     }

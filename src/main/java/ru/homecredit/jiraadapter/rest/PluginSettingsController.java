@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -52,5 +50,14 @@ public class PluginSettingsController {
                         pluginSettingsService.getSettings())).build()
                 : Response.ok(gson.toJson(
                         pluginSettingsService.saveSettings(requestBody))).build();
+    }
+
+    @GET
+    @AnonymousAllowed
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSettings(@QueryParam("fieldKey") String fieldKey) {
+        log.trace("************* starting getSettings method... ************");
+        return Response.ok(gson.toJson(
+                pluginSettingsService.getSettings())).build();
     }
 }

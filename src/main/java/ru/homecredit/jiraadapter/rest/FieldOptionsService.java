@@ -2,6 +2,7 @@ package ru.homecredit.jiraadapter.rest;
 
 import com.atlassian.jira.issue.context.IssueContextImpl;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
+import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
 import com.atlassian.jira.issue.fields.ConfigurableField;
 import com.atlassian.jira.issue.fields.FieldManager;
@@ -20,6 +21,7 @@ import ru.homecredit.jiraadapter.dto.FieldParameters;
 import ru.homecredit.jiraadapter.dto.RequestParameters;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -261,11 +263,16 @@ public class FieldOptionsService {
               getOptions(fieldOptions.getFieldParameters().getFieldConfig()),
               "failed to acquire Options object");
         // acquiring string representation
-        fieldOptions.setFieldOptionsString(options.toString());
+        // fieldOptions.setFieldOptionsString(options.toString());
         // and array representation
         // fieldOptions.setFieldOptionsArr(getStringArrayFromOptionsObject(options));
          fieldOptions.setFieldOptionsArr(options.stream().map(op -> op.getValue()).toArray(String[]::new));
-        log.trace("field options are {}", fieldOptions.getFieldOptionsString());
+        log.trace("field options are {}", fieldOptions.getFieldOptionsArr());
+        HashMap<String, Boolean> isDisabled = new HashMap<>();
+        for (Option option : options) {
+            isDisabled.put(option.getValue(), option.getDisabled());
+        }
+        fieldOptions.setIsDisabled(isDisabled);
     }
 
 }
