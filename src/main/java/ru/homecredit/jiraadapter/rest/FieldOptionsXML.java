@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.*;
 import java.util.Map;
 
 /**
- * class to pack FieldOptions transport object to xml response
+ * class to pack FieldOptions DTO to XML/JSON response
  */
 @XmlRootElement(name = "response")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,7 +51,7 @@ public class FieldOptionsXML {
 
     /**
      * constructor repacks some transport object fields to xml
-     * @param fieldOptions - transport object
+     * @param fieldOptions - DTO
      */
     public FieldOptionsXML(FieldOptions fieldOptions) {
         log.trace("packing response to XML...");
@@ -61,7 +61,6 @@ public class FieldOptionsXML {
         issueTypeId = requestParameters.getIssueTypeId();
         newOption = requestParameters.getNewOption();
         action = requestParameters.getAction().toString();
-
         FieldParameters fieldParameters = fieldOptions.getFieldParameters();
         fieldName = fieldParameters.getFieldName();
         projectName = fieldParameters.getProjectName();

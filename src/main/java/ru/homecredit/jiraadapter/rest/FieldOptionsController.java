@@ -54,7 +54,7 @@ public class FieldOptionsController {
      * http://localhost:2990/jira/rest/cfoptchange/1.0/options?fieldKey=customfield_10000&projKey=test&issueTypeId=10000
      *
      * @param fieldKey - jira customfield key like - cf_10000
-     * @param projKey - jira project key like TES
+     * @param projectKey - jira project key like TES
      * @param issueTypeId - jira issue type id like 10000
      * @return xml response in format, defined in FieldOptionToXML class
      */
@@ -62,17 +62,16 @@ public class FieldOptionsController {
     @AnonymousAllowed
     @Produces(MediaType.APPLICATION_JSON)
     public Response doGet(@QueryParam("fieldKey") String fieldKey,
-                          @QueryParam("projKey") String projKey,
+                          @QueryParam("projectKey") String projectKey,
                           @QueryParam("issueTypeId") String issueTypeId) {
         log.trace("************* starting doGet method... ************");
         FieldOptions fieldOptions = fieldOptionsService.initializeFieldOptions(
                 new RequestParameters(fieldKey,
-                                      projKey,
+                                      projectKey,
                                       issueTypeId));
-        log.info("field Options constructed");
-        log.info(gson.toJson(new FieldOptionsXML(fieldOptions)));
-        log.info("converted to JSON");
-        return Response.ok(gson.toJson(new FieldOptionsXML(fieldOptions))).build();
+        String jsonResponse = gson.toJson(new FieldOptionsXML(fieldOptions));
+        log.info(jsonResponse);
+        return Response.ok(jsonResponse).build();
     }
 
     /**

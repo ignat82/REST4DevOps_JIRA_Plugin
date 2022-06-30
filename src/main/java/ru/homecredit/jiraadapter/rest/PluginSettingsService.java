@@ -35,8 +35,8 @@ public class PluginSettingsService {
         log.info("started getSettings method");
         List<String> fieldKeys = (List<String>)
                 pluginSettings.get(PluginSettingsXML.class.getName() + ".editableFields");
-        log.trace("editableFields are: {}.", fieldKeys);
         pluginSettingsXML.setEditableFields(fieldKeys);
+        log.trace("editableFields are: {}.", fieldKeys);
         return pluginSettingsXML;
     }
 
@@ -48,7 +48,6 @@ public class PluginSettingsService {
      */
     public PluginSettingsXML saveSettings(String requestBody) {
         log.info("started saveSettings method");
-        log.trace("requestBody is: {}", requestBody);
         try {
             String[] fieldsKeys = new JSONObject(requestBody).
                     getString("settingsString").split(",");

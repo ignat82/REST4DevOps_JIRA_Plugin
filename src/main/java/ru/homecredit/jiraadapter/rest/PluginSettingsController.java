@@ -44,7 +44,6 @@ public class PluginSettingsController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response postSettings(String requestBody) {
         log.info("********** starting postSettings method ************");
-        log.trace("request body received is - {}", requestBody);
         return ((requestBody == null || requestBody.equals("")))
                 ? Response.ok(gson.toJson(
                         pluginSettingsService.getSettings())).build()

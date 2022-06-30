@@ -44,7 +44,7 @@
       </action>
     </actions>
   </webwork1>
-
+  
   <web-section key="ru-homecredit-jiraadapter-websection" name="JiraAdapter WebSection"
                i18n-name-key="ru-homecredit-jiraadapter-websection.name"
                location="admin_plugins_menu" weight="1000">

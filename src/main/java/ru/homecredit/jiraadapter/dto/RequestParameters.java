@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import ru.homecredit.jiraadapter.Constants;
 
+import static ru.homecredit.jiraadapter.Constants.DEFAULT_RECEIVED;
+
 @Getter
 @Setter
 @Slf4j
@@ -16,17 +18,22 @@ public class RequestParameters {
     private final String newOption;
     private final Action action;
 
+    @Getter
     public enum Action {
         ADD ("add"),
         ENABLE ("enable"),
         DISABLE ("disable"),
         NOT_RECOGNIZED ("not recognized");
 
-        private final String stringAction;
+        private final String code;
+        private static final Action[] ALL_VALUES = Action.values();
 
-        Action(String stringAction) {
-            this.stringAction = stringAction;
+        Action(String code) {
+            this.code = code;
         }
+
+
+
     }
 
     public RequestParameters(String fieldKey,
@@ -34,28 +41,20 @@ public class RequestParameters {
                              String issueTypeId,
                              String newOption,
                              String action) {
-        log.trace("RequestParameters constructed");
-        this.fieldKey = (!StringUtils.isEmpty(fieldKey))
-                ? fieldKey : Constants.DEFAULT_RECEIVED;
-        this.projectKey = (!StringUtils.isEmpty(projectKey))
-                ? projectKey : Constants.DEFAULT_RECEIVED;
-        this.issueTypeId = (!StringUtils.isEmpty(issueTypeId))
-                ? issueTypeId : Constants.DEFAULT_RECEIVED;
-        this.newOption = (!StringUtils.isEmpty(newOption))
-                ? newOption : Constants.DEFAULT_RECEIVED;
-        this.action = actionFromString(action);
+        this.fieldKey = StringUtils.defaultIfEmpty(fieldKey, DEFAULT_RECEIVED);
+        this.projectKey = StringUtils.defaultIfEmpty(projectKey, DEFAULT_RECEIVED);;
+        this.issueTypeId = StringUtils.defaultIfEmpty(issueTypeId, DEFAULT_RECEIVED);;
+        this.newOption = StringUtils.defaultIfEmpty(newOption, DEFAULT_RECEIVED);;
+        this.action = actionFromCode(action);
     }
 
-    private Action actionFromString(String actionString) {
-        if (StringUtils.isEmpty(actionString)) {
-            return Action.NOT_RECOGNIZED;
+    private Action actionFromCode(String code) {
+        for (Action action : Action.ALL_VALUES) {
+            if (action.getCode().equals(code)) {
+                return action;
+            }
         }
-        switch (StringUtils.lowerCase(actionString)) {
-            case "enable": return Action.ENABLE;
-            case "disable": return Action.DISABLE;
-            case "add": return Action.ADD;
-            default: return Action.NOT_RECOGNIZED;
-        }
+        return Action.NOT_RECOGNIZED;
     }
 
     public RequestParameters(String fieldKey,
@@ -74,7 +73,6 @@ public class RequestParameters {
              Constants.DEFAULT_RECEIVED,
              Constants.DEFAULT_RECEIVED,
              Constants.DEFAULT_RECEIVED);
-        log.trace("dummy RequestParameters constructed");
     }
 
     public String toString() {

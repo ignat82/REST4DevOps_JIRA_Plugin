@@ -54,8 +54,6 @@ public class FieldOptionsService {
         this.projectManager = projectManager;
         this.optionsManager = optionsManager;
         this.pluginSettingsService = new PluginSettingsService(pluginSettingsFactory);
-
-        log.trace("constructed FieldOptionsService instance");
     }
 
     /**
@@ -63,9 +61,8 @@ public class FieldOptionsService {
      * @return FieldOptions transport object
      */
     public FieldOptions postOption(String requestBody) {
-        log.info("starting postOption method with extraction parameters from request body");
+        log.info("starting postOption method");
         RequestParameters requestParameters = extractRequestParameters(requestBody);
-        log.info("initializing FieldOptions");
         FieldOptions fieldOptions = initializeFieldOptions(requestParameters);
         if (fieldOptions == null) {
             log.error("shutting down postOption cuz fieldOptions object wasn't constructed");
@@ -110,23 +107,19 @@ public class FieldOptionsService {
             }
             case DISABLE: {
                 String optionValue = fieldOptions.getRequestParameters().getNewOption();
-                log.trace("trying to disable option \"{}\"", optionValue);
                 Options options = optionsManager.getOptions(
                         fieldOptions.getFieldParameters().getFieldConfig()
                 );
                 if (options.getOptionForValue(optionValue, null) != null) {
                     options.getOptionForValue(optionValue, null).setDisabled(false);
-                    log.trace("enabled option \"{}\"", optionValue);
+                    log.trace("disabled option \"{}\"", optionValue);
                 } else {
                     log.error("option {} seems not to exist. shutting down", optionValue);
                 }
-                options.getOptionForValue(optionValue, null).setDisabled(true);
-                log.trace("disabled option \"{}\"", optionValue);
                 return fieldOptions;
             }
             case ENABLE: {
                 String optionValue = fieldOptions.getRequestParameters().getNewOption();
-                log.trace("trying to enable option \"{}\"", optionValue);
                 Options options = optionsManager.getOptions(
                         fieldOptions.getFieldParameters().getFieldConfig()
                 );
@@ -178,8 +171,6 @@ public class FieldOptionsService {
             log.error("could not parse request body - {}", requestBody);
             log.error("exception is - {}", e.getMessage());
         }
-        log.info("parameters received are {}", requestParameters);
-
         return requestParameters;
     }
 
@@ -190,27 +181,20 @@ public class FieldOptionsService {
         log.info("starting initializeFieldParameters method");
         FieldParameters fieldParameters = new FieldParameters();
         try {
-            log.info("fieldKey from requestParameters is {}", requestParameters.getFieldKey());
             ConfigurableField field = fieldManager.
                  getConfigurableField(requestParameters.getFieldKey());
-            log.trace("field {} acquired as {}", requestParameters.getFieldKey(), field.getName());
             fieldParameters.setFieldName(field.getName());
             Project project = projectManager.
                   getProjectByCurrentKeyIgnoreCase(requestParameters.getProjectKey());
-            log.trace("project {} acquired as {}",
-                     requestParameters.getProjectKey(), project.getName());
             fieldParameters.setProjectName(project.getName());
             IssueContextImpl issueContext = new IssueContextImpl(project.getId(),
                    requestParameters.getIssueTypeId());
-            log.trace("issue context acquired as " + issueContext.toString());
             FieldConfig fieldConfig = field.getRelevantConfig(issueContext);
-            log.trace("field configuration acquired as {}", fieldConfig.getName());
             fieldParameters.setFieldConfig(fieldConfig);
             fieldParameters.setFieldConfigName(fieldConfig.getName());
             fieldParameters.setValidContext(true);
             boolean permittedToEdit = pluginSettingsService.getSettings().getEditableFields().
                     contains(requestParameters.getFieldKey());
-            log.trace("field permitted to edit in plugin settings {}", permittedToEdit);
             fieldParameters.setPermittedToEdit(permittedToEdit);
         } catch (Exception e) {
             log.error("failed to initialize field parameters with error {}",
@@ -219,39 +203,6 @@ public class FieldOptionsService {
         }
         return fieldParameters;
     }
-    /*
-    private FieldParameters initializeFieldParameters(RequestParameters requestParameters) {
-        log.trace("starting initializeFieldParameters method");
-        FieldParameters fieldParameters = new FieldParameters();
-        ConfigurableField field = Objects.requireNonNull(fieldManager.
-               getConfigurableField(requestParameters.getFieldKey()),
-                    "failed to acquire field " + requestParameters.getFieldKey());
-        log.trace("field {} acquired as {}", requestParameters.getFieldKey(),
-                    fieldParameters.getFieldName());
-        fieldParameters.setFieldName(field.getName());
-        Project project =
-                Objects.requireNonNull(projectManager.
-                       getProjectByCurrentKeyIgnoreCase(requestParameters.getProjectKey()),
-                       "failed to acquire project " + requestParameters.getProjectKey());
-        log.trace("project {} acquired as {}",
-                    requestParameters.getProjectKey(), project.getName());
-        fieldParameters.setProjectName(project.getName());
-        IssueContextImpl issueContext = new IssueContextImpl(project.getId(),
-                              requestParameters.getIssueTypeId());
-        log.trace("issue context acquired as " + issueContext.toString());
-        FieldConfig fieldConfig = Objects.requireNonNull(field.
-              getRelevantConfig(issueContext), "failed to acquire FieldConfig from context");
-        log.trace("field configuration acquired as {}", fieldConfig.getName());
-        fieldParameters.setFieldConfig(fieldConfig);
-        fieldParameters.setFieldConfigName(fieldConfig.getName());
-        fieldParameters.setValidContext(true);
-        boolean permittedToEdit = pluginSettingsService.getSettings().getEditableFields().
-                contains(requestParameters.getFieldKey());
-        log.trace("field permitted to edit in plugin settings {}", permittedToEdit);
-        fieldParameters.setPermittedToEdit(permittedToEdit);
-        return fieldParameters;
-    }
-    /*
 
     /**
      * method to initialize options of field, attributes of which are stored in
@@ -262,17 +213,13 @@ public class FieldOptionsService {
         Options options = Objects.requireNonNull(optionsManager.
               getOptions(fieldOptions.getFieldParameters().getFieldConfig()),
               "failed to acquire Options object");
-        // acquiring string representation
-        // fieldOptions.setFieldOptionsString(options.toString());
-        // and array representation
-        // fieldOptions.setFieldOptionsArr(getStringArrayFromOptionsObject(options));
-         fieldOptions.setFieldOptionsArr(options.stream().map(op -> op.getValue()).toArray(String[]::new));
-        log.trace("field options are {}", fieldOptions.getFieldOptionsArr());
+        fieldOptions.setFieldOptionsArr(options.stream().map(op -> op.getValue()).toArray(String[]::new));
         HashMap<String, Boolean> isDisabled = new HashMap<>();
         for (Option option : options) {
             isDisabled.put(option.getValue(), option.getDisabled());
         }
         fieldOptions.setIsDisabled(isDisabled);
+        log.trace("field options are {}", fieldOptions.getFieldOptionsArr());
     }
 
 }

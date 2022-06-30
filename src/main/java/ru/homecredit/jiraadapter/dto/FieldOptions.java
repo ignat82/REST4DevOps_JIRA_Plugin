@@ -24,14 +24,12 @@ public class FieldOptions {
 
     public FieldOptions() {
         this(new RequestParameters());
-        log.trace("dummy FieldOptions constructed");
     }
 
     /**
      *
      */
     public FieldOptions(RequestParameters requestParameters) {
-        log.trace("starting FieldOptions instance construction");
         this.requestParameters = requestParameters;
     }
 }

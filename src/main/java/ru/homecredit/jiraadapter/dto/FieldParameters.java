@@ -9,7 +9,6 @@ import static ru.homecredit.jiraadapter.Constants.DEFAULT_ACQUIRED;
 
 @Setter
 @Getter
-// @Data
 public class FieldParameters {
     private String fieldName = DEFAULT_ACQUIRED;
     private String projectName = DEFAULT_ACQUIRED;
