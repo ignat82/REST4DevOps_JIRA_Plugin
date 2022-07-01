@@ -67,7 +67,7 @@ public class FieldOptionsXML {
         fieldConfigName = fieldParameters.getFieldConfigName();
         isDisabled = fieldOptions.getIsDisabled();
         this.fieldOptions = fieldOptions.getFieldOptionsArr();
-        result = Boolean.toString(fieldOptions.isOptionAdded());
+        result = Boolean.toString(fieldOptions.isResult());
     }
 
 }

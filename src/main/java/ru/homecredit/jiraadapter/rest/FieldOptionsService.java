@@ -98,7 +98,7 @@ public class FieldOptionsService {
                                             null,
                                             (long) (size + 1),
                                             newOptionValue);
-                fieldOptions.setOptionAdded(true);
+                fieldOptions.setResult(true);
                 log.trace("added option \"{}\" to Options", newOptionValue);
                 /* acquiring Options object and Options from it once again, cuz the
                 new one was appended */
@@ -112,6 +112,7 @@ public class FieldOptionsService {
                 );
                 if (options.getOptionForValue(optionValue, null) != null) {
                     options.getOptionForValue(optionValue, null).setDisabled(false);
+                    fieldOptions.setResult(true);
                     log.trace("disabled option \"{}\"", optionValue);
                 } else {
                     log.error("option {} seems not to exist. shutting down", optionValue);
@@ -125,6 +126,7 @@ public class FieldOptionsService {
                 );
                 if (options.getOptionForValue(optionValue, null) != null) {
                     options.getOptionForValue(optionValue, null).setDisabled(false);
+                    fieldOptions.setResult(true);
                     log.trace("enabled option \"{}\"", optionValue);
                 } else {
                     log.error("option {} seems not to exist. shutting down", optionValue);

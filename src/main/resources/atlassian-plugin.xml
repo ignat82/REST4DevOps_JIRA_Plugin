@@ -44,7 +44,7 @@
       </action>
     </actions>
   </webwork1>
-  
+
   <web-section key="ru-homecredit-jiraadapter-websection" name="JiraAdapter WebSection"
                i18n-name-key="ru-homecredit-jiraadapter-websection.name"
                location="admin_plugins_menu" weight="1000">
@@ -56,7 +56,7 @@
   <web-item name="JiraAdapter Configuration" i18n-name-key="ru-homecredit-jiraadapter-configuration.name"
             key="ru-homecredit-jiraadapter-configuration"
             section="admin_plugins_menu/ru-homecredit-jiraadapter-websection" weight="1000">
-    <label><!-- key="ru-homecredit-jiraadapter-configuration.label" -->Configure</label>
+    <label key="ru-homecredit-jiraadapter-configuration.label" >Configure</label>
     <description key="ru-homecredit-jiraadapter-configuration.description">configuration</description>
     <link linkId="ru-homecredit-jiraadapter-configuration-link">/secure/WebWorkAction.jspa</link>
   </web-item>

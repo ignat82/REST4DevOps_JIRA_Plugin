@@ -20,7 +20,7 @@ public class FieldOptions {
     //private String fieldOptionsString = Constants.DEFAULT_ACQUIRED;
     private String[] fieldOptionsArr;
     private Map<String, Boolean> isDisabled = new HashMap<>();
-    private boolean optionAdded = false;
+    private boolean result = false;
 
     public FieldOptions() {
         this(new RequestParameters());
