@@ -111,7 +111,7 @@ public class FieldOptionsService {
                         fieldOptions.getFieldParameters().getFieldConfig()
                 );
                 if (options.getOptionForValue(optionValue, null) != null) {
-                    options.getOptionForValue(optionValue, null).setDisabled(false);
+                    options.getOptionForValue(optionValue, null).setDisabled(true);
                     fieldOptions.setResult(true);
                     log.trace("disabled option \"{}\"", optionValue);
                 } else {
