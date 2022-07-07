@@ -1,5 +1,7 @@
 package ru.homecredit.jiraadapter.dto;
 
+import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,24 +18,18 @@ public class RequestParameters {
     private final String projectKey;
     private final String issueTypeId;
     private final String newOption;
-    private final Action action;
+    private Action action = Action.NOT_RECOGNIZED;
 
     @Getter
+    @AllArgsConstructor
     public enum Action {
-        ADD ("add"),
-        ENABLE ("enable"),
-        DISABLE ("disable"),
-        NOT_RECOGNIZED ("not recognized");
+        @SerializedName("add") ADD ("add"),
+        @SerializedName("enable") ENABLE ("enable"),
+        @SerializedName("disable") DISABLE ("disable"),
+        @SerializedName("not recognized") NOT_RECOGNIZED ("not recognized");
 
         private final String code;
         private static final Action[] ALL_VALUES = Action.values();
-
-        Action(String code) {
-            this.code = code;
-        }
-
-
-
     }
 
     public RequestParameters(String fieldKey,
@@ -75,6 +71,7 @@ public class RequestParameters {
              Constants.DEFAULT_RECEIVED);
     }
 
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("fieldKey = ").append(fieldKey).append("; projectKey = ").

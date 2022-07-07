@@ -9,8 +9,6 @@ import com.atlassian.jira.issue.fields.FieldManager;
 import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
-import com.atlassian.jira.util.json.JSONException;
-import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -162,14 +160,13 @@ public class FieldOptionsService {
         log.info("starting extractRequestParameters(String requestBody) method");
         RequestParameters requestParameters = null;
         try {
-            JSONObject requestJSON = new JSONObject(requestBody);
-            requestParameters =
-                    new RequestParameters(requestJSON.getString("fieldKey"),
-                                          requestJSON.getString("projectKey"),
-                                          requestJSON.getString("issueTypeId"),
-                                          requestJSON.getString("newOption"),
-                                          requestJSON.getString("action"));
-        } catch (JSONException e) {
+            requestParameters = gson.fromJson(requestBody, RequestParameters.class);
+            if (requestParameters.getAction() == null) {
+                log.warn("got null action. setting default");
+                requestParameters.setAction(RequestParameters.Action.NOT_RECOGNIZED);
+            }
+            log.info("json deserialized \n{}", requestParameters);
+        } catch (Exception e) {
             log.error("could not parse request body - {}", requestBody);
             log.error("exception is - {}", e.getMessage());
         }
