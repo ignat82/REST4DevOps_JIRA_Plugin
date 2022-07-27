@@ -37,7 +37,7 @@ public class PluginSettingsController {
     /**
      * method to handle get request trough invoking settingsService
      * @param requestBody - json string with request parameters
-     * @return
+     * @return - jsonResponse
      */
     @POST
     @AnonymousAllowed

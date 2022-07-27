@@ -3,6 +3,7 @@ package ru.homecredit.jiraadapter.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import ru.homecredit.jiraadapter.dto.request.Request;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.Map;
 @Slf4j
 public class FieldOptions {
 
-    private RequestParameters requestParameters;
+    private Request request;
     private FieldParameters fieldParameters;
     //private String fieldOptionsString = Constants.DEFAULT_ACQUIRED;
     private String[] fieldOptionsArr;
@@ -23,14 +24,14 @@ public class FieldOptions {
     private boolean result = false;
 
     public FieldOptions() {
-        this(new RequestParameters());
+        this(new Request());
     }
 
     /**
      *
      */
-    public FieldOptions(RequestParameters requestParameters) {
-        this.requestParameters = requestParameters;
+    public FieldOptions(Request request) {
+        this.request = request;
     }
 }
 

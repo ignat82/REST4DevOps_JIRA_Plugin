@@ -17,11 +17,11 @@ import javax.inject.Named;
 @Named ("myPluginComponent")
 @Slf4j
 public class MyPluginComponentImpl implements MyPluginComponent {
-    private final  ApplicationProperties applicationProperties;
-    private final  PluginSettingsFactory pluginSettingsFactory;
-    public final   FieldManager fieldManager;
+    private final ApplicationProperties applicationProperties;
+    private final PluginSettingsFactory pluginSettingsFactory;
+    private final FieldManager fieldManager;
     private final ProjectManager projectManager;
-    private final  OptionsManager optionsManger;
+    private final OptionsManager optionsManger;
 
     @Inject
     public MyPluginComponentImpl(@ComponentImport ApplicationProperties applicationProperties,

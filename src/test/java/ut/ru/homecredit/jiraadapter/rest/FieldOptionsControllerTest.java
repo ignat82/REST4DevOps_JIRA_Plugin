@@ -42,7 +42,7 @@ public class FieldOptionsControllerTest {
 
         Response response = resource.doPost("customfield_10000"
                 , "TES", "new10");
-        final FieldOptionsXML XMLResponse = (FieldOptionsXML) response.getEntity();
+        final Response XMLResponse = (Response) response.getEntity();
 
         assertEquals("wrong message", "customfield_10000", XMLResponse.getFieldKey());
         */

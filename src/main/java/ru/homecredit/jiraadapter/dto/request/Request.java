@@ -1,4 +1,4 @@
-package ru.homecredit.jiraadapter.dto;
+package ru.homecredit.jiraadapter.dto.request;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
@@ -13,12 +13,12 @@ import static ru.homecredit.jiraadapter.Constants.DEFAULT_RECEIVED;
 @Getter
 @Setter
 @Slf4j
-public class RequestParameters {
+public class Request {
     private final String fieldKey;
     private final String projectKey;
     private final String issueTypeId;
     private final String newOption;
-    private Action action = Action.NOT_RECOGNIZED;
+    private Action action;
 
     @Getter
     @AllArgsConstructor
@@ -32,11 +32,11 @@ public class RequestParameters {
         private static final Action[] ALL_VALUES = Action.values();
     }
 
-    public RequestParameters(String fieldKey,
-                             String projectKey,
-                             String issueTypeId,
-                             String newOption,
-                             String action) {
+    public Request(String fieldKey,
+                   String projectKey,
+                   String issueTypeId,
+                   String newOption,
+                   String action) {
         this.fieldKey = StringUtils.defaultIfEmpty(fieldKey, DEFAULT_RECEIVED);
         this.projectKey = StringUtils.defaultIfEmpty(projectKey, DEFAULT_RECEIVED);;
         this.issueTypeId = StringUtils.defaultIfEmpty(issueTypeId, DEFAULT_RECEIVED);;
@@ -53,9 +53,9 @@ public class RequestParameters {
         return Action.NOT_RECOGNIZED;
     }
 
-    public RequestParameters(String fieldKey,
-                             String projectKey,
-                             String issueTypeId) {
+    public Request(String fieldKey,
+                   String projectKey,
+                   String issueTypeId) {
         this(fieldKey,
              projectKey,
              issueTypeId,
@@ -63,7 +63,7 @@ public class RequestParameters {
              Constants.DEFAULT_RECEIVED);
     }
 
-    public RequestParameters() {
+    public Request() {
         this(Constants.DEFAULT_RECEIVED,
              Constants.DEFAULT_RECEIVED,
              Constants.DEFAULT_RECEIVED,

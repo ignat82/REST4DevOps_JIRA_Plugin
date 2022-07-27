@@ -2,9 +2,9 @@ package ru.homecredit.jiraadapter.rest;
 
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import lombok.extern.slf4j.Slf4j;
+import ru.homecredit.jiraadapter.dto.PluginSettings;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Slf4j
 public class PluginSettingsService {
-    private final PluginSettings pluginSettings;
+    private final com.atlassian.sal.api.pluginsettings.PluginSettings pluginSettings;
 
     /**
      * constructor creates settingsObject
@@ -30,14 +30,18 @@ public class PluginSettingsService {
      * receives the current plugin settings from jira
      * @return - XML transport object
      */
-    public PluginSettingsXML getSettings() {
-        PluginSettingsXML pluginSettingsXML = new PluginSettingsXML();
+    public PluginSettings getSettings() {
+        PluginSettings pluginSettings = new PluginSettings();
         log.info("started getSettings method");
-        List<String> fieldKeys = (List<String>)
-                pluginSettings.get(PluginSettingsXML.class.getName() + ".editableFields");
-        pluginSettingsXML.setEditableFields(fieldKeys);
-        log.trace("editableFields are: {}.", fieldKeys);
-        return pluginSettingsXML;
+        try {
+            List<String> fieldKeys = (List<String>)
+                    this.pluginSettings.get(PluginSettings.class.getName() + ".editableFields");
+            pluginSettings.setEditableFields(fieldKeys);
+            log.info("editableFields are: {}.", fieldKeys);
+        } catch (Exception e) {
+            log.error("failed to acquire plugin settings with error " + e);
+        }
+        return pluginSettings;
     }
 
     /**
@@ -46,7 +50,7 @@ public class PluginSettingsService {
      * @param requestBody - json string received from POST request
      * @return  - XML transport object
      */
-    public PluginSettingsXML saveSettings(String requestBody) {
+    public PluginSettings saveSettings(String requestBody) {
         log.info("started saveSettings method");
         try {
             String[] fieldsKeys = new JSONObject(requestBody).
@@ -54,7 +58,7 @@ public class PluginSettingsService {
             for (String key : fieldsKeys) {
                 log.trace("key is: {}", key);
             }
-            pluginSettings.put(PluginSettingsXML.class.getName() +
+            pluginSettings.put(PluginSettings.class.getName() +
                                        ".editableFields", Arrays.asList(fieldsKeys));
         } catch (JSONException jsonException){
             log.error("caught {} when parsing requestBody", jsonException.getMessage());

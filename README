@@ -15,11 +15,11 @@ REST API endpoints:
 
 for GET request to acquire the options of customfild in given context:
 http://{host}/jira/rest/cfoptchange/1.0/options?fieldKey={key}
-        &projKey={key}&issueTypeId={id}
+        &projectKey={key}&issueTypeId={id}
 
 for POST request to append new option to options of customfild in given context:
 http://{host}/jira/rest/cfoptchange/1.0/options?fieldKey={key}
-        &projKey={key}&issueTypeId={id}&newOption{value}
+        &projectKey={key}&issueTypeId={id}&newOption{value}
 
 for POST request to acquire current settings (list of fields permitted to managing
 options in):

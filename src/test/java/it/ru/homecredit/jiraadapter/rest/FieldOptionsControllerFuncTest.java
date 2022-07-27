@@ -1,6 +1,6 @@
 package it.ru.homecredit.jiraadapter.rest;
 
-import ru.homecredit.jiraadapter.rest.FieldOptionsXML;
+import ru.homecredit.jiraadapter.dto.response.Response;
 import org.apache.wink.client.Resource;
 import org.apache.wink.client.RestClient;
 import org.junit.After;
@@ -30,7 +30,7 @@ public class FieldOptionsControllerFuncTest {
         RestClient client = new RestClient();
         Resource resource = client.resource(resourceUrl);
 
-        FieldOptionsXML message = resource.get(FieldOptionsXML.class);
+        Response message = resource.get(Response.class);
 
         assertEquals("wrong message", "customfield_10000", message.getFieldKey());
     }

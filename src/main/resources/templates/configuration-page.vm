@@ -1,0 +1,36 @@
+<html>
+	<head>
+	    <title>Jira Adapter Configuration</title>
+	    <meta name="decorator" content="atl.admin">
+	</head>
+	<body>
+		<form name="customFieldConfiguration" onsubmit="return validateForm()">
+		  <p>Put comma separated customfields keys here<br>
+		  <br>
+		  <b>customfield keys: </b><input type="text" name="customField_id">
+		  <input type="submit" value="Send" >
+		</form>
+
+		<script>
+			function validateForm() {
+			    let x = document.forms["customFieldConfiguration"]["customField_id"].value;
+			    var value = x;
+			    if (x == "") {
+			        alert("поле пустое");
+			        return false;
+			    } else {
+			        postCustomFieldID(value);
+			        return false;
+			    }
+			}
+			function postCustomFieldID(value) {
+			    let xhr = new XMLHttpRequest();
+			    xhr.open("POST", "/jira/rest/cfoptchange/1.0/settings/");
+			    xhr.setRequestHeader("Accept", "application/json");
+			    xhr.setRequestHeader("Content-Type", "application/json");
+			    xhr.onload = () => console.log(xhr.responseText);
+			    xhr.send("{\"settingsString\" : "+ "\"" + value +"\"" +"}");
+			}
+		</script>
+	</body>
+</html>

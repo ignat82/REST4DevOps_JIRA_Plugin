@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.homecredit.jiraadapter.Constants;
 import ru.homecredit.jiraadapter.dto.FieldOptions;
 import ru.homecredit.jiraadapter.dto.FieldParameters;
-import ru.homecredit.jiraadapter.dto.RequestParameters;
+import ru.homecredit.jiraadapter.dto.request.Request;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,8 +60,8 @@ public class FieldOptionsService {
      */
     public FieldOptions postOption(String requestBody) {
         log.info("starting postOption method");
-        RequestParameters requestParameters = extractRequestParameters(requestBody);
-        FieldOptions fieldOptions = initializeFieldOptions(requestParameters);
+        Request request = extractRequestParameters(requestBody);
+        FieldOptions fieldOptions = initializeFieldOptions(request);
         if (fieldOptions == null) {
             log.error("shutting down postOption cuz fieldOptions object wasn't constructed");
             return null;
@@ -74,14 +74,14 @@ public class FieldOptionsService {
             log.error("shutting down postOption cuz invalid FieldContext");
             return fieldOptions;
         }
-        switch (fieldOptions.getRequestParameters().getAction()) {
+        switch (fieldOptions.getRequest().getAction()) {
             case NOT_RECOGNIZED: {
                 log.error("shutting down postOption cuz action parameter not provided");
                 return fieldOptions;
             }
             case ADD: {
                 log.trace("trying to add new Option");
-                String newOptionValue = fieldOptions.getRequestParameters().getNewOption();
+                String newOptionValue = fieldOptions.getRequest().getNewOption();
                 if (newOptionValue.equals(Constants.DEFAULT_RECEIVED)) {
                     log.error("shutting down postOption cuz newOption not provided");
                     return fieldOptions;
@@ -104,7 +104,7 @@ public class FieldOptionsService {
                 return fieldOptions;
             }
             case DISABLE: {
-                String optionValue = fieldOptions.getRequestParameters().getNewOption();
+                String optionValue = fieldOptions.getRequest().getNewOption();
                 Options options = optionsManager.getOptions(
                         fieldOptions.getFieldParameters().getFieldConfig()
                 );
@@ -118,7 +118,7 @@ public class FieldOptionsService {
                 return fieldOptions;
             }
             case ENABLE: {
-                String optionValue = fieldOptions.getRequestParameters().getNewOption();
+                String optionValue = fieldOptions.getRequest().getNewOption();
                 Options options = optionsManager.getOptions(
                         fieldOptions.getFieldParameters().getFieldConfig()
                 );
@@ -137,15 +137,15 @@ public class FieldOptionsService {
 
     /**
      * method to acquire the options of given field in given context
-     * @param requestParameters
+     * @param request
      * @return - FieldOptions transport object
      */
-    public FieldOptions initializeFieldOptions(RequestParameters requestParameters) {
+    public FieldOptions initializeFieldOptions(Request request) {
         log.info("starting initializeFieldOptions" +
-                            "(RequestParameters requestParameters) method");
+                            "(Request request) method");
         FieldOptions fieldOptions = new FieldOptions();
-        fieldOptions.setRequestParameters(requestParameters);
-        FieldParameters fieldParameters = initializeFieldParameters(requestParameters);
+        fieldOptions.setRequest(request);
+        FieldParameters fieldParameters = initializeFieldParameters(request);
         if (fieldParameters == null) {
             log.error("shutting down initializeFieldOptions method cuz fieldParameters==null");
             fieldOptions.setFieldParameters(new FieldParameters());
@@ -156,44 +156,47 @@ public class FieldOptionsService {
         return fieldOptions;
     }
 
-    private RequestParameters extractRequestParameters(String requestBody) {
+    private Request extractRequestParameters(String requestBody) {
         log.info("starting extractRequestParameters(String requestBody) method");
-        RequestParameters requestParameters = null;
+        Request request = null;
         try {
-            requestParameters = gson.fromJson(requestBody, RequestParameters.class);
-            if (requestParameters.getAction() == null) {
+            request = gson.fromJson(requestBody, Request.class);
+            if (request.getAction() == null) {
                 log.warn("got null action. setting default");
-                requestParameters.setAction(RequestParameters.Action.NOT_RECOGNIZED);
+                request.setAction(Request.Action.NOT_RECOGNIZED);
             }
-            log.info("json deserialized \n{}", requestParameters);
+            log.info("json deserialized \n{}", request);
         } catch (Exception e) {
             log.error("could not parse request body - {}", requestBody);
             log.error("exception is - {}", e.getMessage());
         }
-        return requestParameters;
+        return request;
     }
 
     /**
      *
      */
-    private FieldParameters initializeFieldParameters(RequestParameters requestParameters) {
+    private FieldParameters initializeFieldParameters(Request request) {
         log.info("starting initializeFieldParameters method");
         FieldParameters fieldParameters = new FieldParameters();
         try {
+            // log.info("field key is " + request.getFieldKey());
             ConfigurableField field = fieldManager.
-                 getConfigurableField(requestParameters.getFieldKey());
+                 getConfigurableField(request.getFieldKey());
             fieldParameters.setFieldName(field.getName());
+            // log.info("field name is " + field.getName());
             Project project = projectManager.
-                  getProjectByCurrentKeyIgnoreCase(requestParameters.getProjectKey());
+                  getProjectByCurrentKeyIgnoreCase(request.getProjectKey());
             fieldParameters.setProjectName(project.getName());
             IssueContextImpl issueContext = new IssueContextImpl(project.getId(),
-                   requestParameters.getIssueTypeId());
+                                                                 request.getIssueTypeId());
             FieldConfig fieldConfig = field.getRelevantConfig(issueContext);
             fieldParameters.setFieldConfig(fieldConfig);
             fieldParameters.setFieldConfigName(fieldConfig.getName());
             fieldParameters.setValidContext(true);
+            log.info("valid context " + fieldParameters.isValidContext());
             boolean permittedToEdit = pluginSettingsService.getSettings().getEditableFields().
-                    contains(requestParameters.getFieldKey());
+                    contains(request.getFieldKey());
             fieldParameters.setPermittedToEdit(permittedToEdit);
         } catch (Exception e) {
             log.error("failed to initialize field parameters with error {}",

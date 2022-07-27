@@ -9,13 +9,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import ru.homecredit.jiraadapter.dto.FieldOptions;
-import ru.homecredit.jiraadapter.dto.RequestParameters;
+import ru.homecredit.jiraadapter.dto.request.Request;
+import ru.homecredit.jiraadapter.dto.response.Response;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * The core class for handling GET and POST requests to /options endpoint
@@ -61,17 +61,17 @@ public class FieldOptionsController {
     @GET
     @AnonymousAllowed
     @Produces(MediaType.APPLICATION_JSON)
-    public Response doGet(@QueryParam("fieldKey") String fieldKey,
-                          @QueryParam("projectKey") String projectKey,
-                          @QueryParam("issueTypeId") String issueTypeId) {
+    public javax.ws.rs.core.Response doGet(@QueryParam("fieldKey") String fieldKey,
+                                           @QueryParam("projectKey") String projectKey,
+                                           @QueryParam("issueTypeId") String issueTypeId) {
         log.trace("************* starting doGet method... ************");
         FieldOptions fieldOptions = fieldOptionsService.initializeFieldOptions(
-                new RequestParameters(fieldKey,
-                                      projectKey,
-                                      issueTypeId));
-        String jsonResponse = gson.toJson(new FieldOptionsXML(fieldOptions));
+                new Request(fieldKey,
+                            projectKey,
+                            issueTypeId));
+        String jsonResponse = gson.toJson(new Response(fieldOptions));
         log.info(jsonResponse);
-        return Response.ok(jsonResponse).build();
+        return javax.ws.rs.core.Response.ok(jsonResponse).build();
     }
 
     /**
@@ -85,11 +85,11 @@ public class FieldOptionsController {
     @AnonymousAllowed
     @Produces(MediaType.APPLICATION_JSON)
     // rename to addOption ??
-    public Response doPost(String requestBody) {
+    public javax.ws.rs.core.Response doPost(String requestBody) {
         log.trace("************ starting doPost method... **************");
         FieldOptions fieldOptions = fieldOptionsService.postOption(requestBody);
         return (fieldOptions == null)
-            ? Response.ok("something goes wrong. Check log file").build()
-            : Response.ok(gson.toJson(new FieldOptionsXML(fieldOptions))).build();
+            ? javax.ws.rs.core.Response.ok("something goes wrong. Check log file").build()
+            : javax.ws.rs.core.Response.ok(gson.toJson(new Response(fieldOptions))).build();
     }
 }
