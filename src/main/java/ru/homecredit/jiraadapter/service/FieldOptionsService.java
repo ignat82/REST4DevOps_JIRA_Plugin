@@ -1,4 +1,4 @@
-package ru.homecredit.jiraadapter.rest;
+package ru.homecredit.jiraadapter.service;
 
 import com.atlassian.jira.issue.context.IssueContextImpl;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
@@ -21,6 +21,8 @@ import ru.homecredit.jiraadapter.dto.request.Request;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
+
+import static ru.homecredit.jiraadapter.dto.request.Request.Action.DISABLE;
 
 /**
  * class for manging customfield options trough Jira Java API by handling the
@@ -103,27 +105,16 @@ public class FieldOptionsService {
                 initializeOptions(fieldOptions);
                 return fieldOptions;
             }
-            case DISABLE: {
-                String optionValue = fieldOptions.getRequest().getNewOption();
-                Options options = optionsManager.getOptions(
-                        fieldOptions.getFieldParameters().getFieldConfig()
-                );
-                if (options.getOptionForValue(optionValue, null) != null) {
-                    options.getOptionForValue(optionValue, null).setDisabled(true);
-                    fieldOptions.setResult(true);
-                    log.trace("disabled option \"{}\"", optionValue);
-                } else {
-                    log.error("option {} seems not to exist. shutting down", optionValue);
-                }
-                return fieldOptions;
-            }
+            case DISABLE:
             case ENABLE: {
                 String optionValue = fieldOptions.getRequest().getNewOption();
                 Options options = optionsManager.getOptions(
                         fieldOptions.getFieldParameters().getFieldConfig()
                 );
                 if (options.getOptionForValue(optionValue, null) != null) {
-                    options.getOptionForValue(optionValue, null).setDisabled(false);
+                    options.getOptionForValue(optionValue, null).setDisabled(
+                            fieldOptions.getRequest().getAction() == DISABLE
+                    );
                     fieldOptions.setResult(true);
                     log.trace("enabled option \"{}\"", optionValue);
                 } else {

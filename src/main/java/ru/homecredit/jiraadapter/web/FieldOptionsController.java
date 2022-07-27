@@ -1,4 +1,4 @@
-package ru.homecredit.jiraadapter.rest;
+package ru.homecredit.jiraadapter.web;
 
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.fields.FieldManager;
@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.homecredit.jiraadapter.dto.FieldOptions;
 import ru.homecredit.jiraadapter.dto.request.Request;
 import ru.homecredit.jiraadapter.dto.response.Response;
+import ru.homecredit.jiraadapter.service.FieldOptionsService;
 
 import javax.inject.Inject;
 import javax.inject.Named;

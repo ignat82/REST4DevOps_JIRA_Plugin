@@ -14,12 +14,12 @@
     <param name="configure.url">/secure/JiraAdapterConfigurationWebItemAction.jspa</param>
   </plugin-info>
   <!-- add our i18n resource -->
-  <resource type="i18n" name="i18n" location="jiraadapter"/>
+  <resource type="i18n" name="i18n" location="${project.artifactId}"/>
   <!-- add our web resources -->
 
-  <web-resource key="ru-homecredit-jiraadapter-resources"
+  <web-resource key="${atlassian.plugin.key}.resources"
                 name="JiraAdapter Web Resource">
-    <description key="ru-homecredit-jiraadapter-resources.description">AUI plugin and png thumbnails</description>
+    <description key="${atlassian.plugin.key}.resources.description">AUI plugin and png thumbnails</description>
     <dependency>com.atlassian.auiplugin:ajs</dependency>
     <!--
     <resource type="download" name="REST4DevOps.css" location="/css/REST4DevOps.css"/>
@@ -47,7 +47,7 @@
     <description key="${atlassian.plugin.key}.webwork.description">JiraAdapter REST Plugin Webwork
       Module description</description>
     <actions>
-      <action name="${atlassian.plugin.key}.webwork.JiraAdapterConfigurationWebItemAction"
+      <action name="ru.homecredit.jiraadapter.webwork.JiraAdapterConfigurationWebItemAction"
               alias="JiraAdapterConfigurationWebItemAction">
         <view name="configuration-page">/templates/configuration-page.vm</view>
       </action>

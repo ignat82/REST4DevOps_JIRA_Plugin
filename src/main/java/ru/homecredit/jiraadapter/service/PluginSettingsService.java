@@ -1,4 +1,4 @@
-package ru.homecredit.jiraadapter.rest;
+package ru.homecredit.jiraadapter.service;
 
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;

@@ -1,10 +1,11 @@
-package ru.homecredit.jiraadapter.rest;
+package ru.homecredit.jiraadapter.web;
 
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
+import ru.homecredit.jiraadapter.service.PluginSettingsService;
 
 import javax.inject.Inject;
 import javax.inject.Named;

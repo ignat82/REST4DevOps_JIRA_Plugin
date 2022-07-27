@@ -18,7 +18,6 @@ public class FieldOptions {
 
     private Request request;
     private FieldParameters fieldParameters;
-    //private String fieldOptionsString = Constants.DEFAULT_ACQUIRED;
     private String[] fieldOptionsArr;
     private Map<String, Boolean> isDisabled = new HashMap<>();
     private boolean result = false;
