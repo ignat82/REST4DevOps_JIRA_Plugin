@@ -13,7 +13,7 @@ import java.util.List;
 public final class PluginSettings {
     @XmlElementWrapper(name = "editableFields")
     @XmlElement(name = "field")
-    private              List<String> editableFields;
+    private List<String> editableFields;
 
     public PluginSettings() {
         log.info("starting PluginSettings instance construction");
@@ -22,6 +22,17 @@ public final class PluginSettings {
     public List<String> getEditableFields()
     {
         return new ArrayList<>(editableFields);
+    }
+
+    public String getCommaSeparatedields() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String editableField : editableFields) {
+            stringBuilder.append(editableField).append(",");
+        }
+        if (stringBuilder.length() != 0) {
+            stringBuilder.setLength(stringBuilder.length() - 1);
+        }
+        return stringBuilder.toString();
     }
 
     public void setEditableFields(List<String> editableFields)

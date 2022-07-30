@@ -1,7 +1,6 @@
 package ru.homecredit.jiraadapter.web;
 
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +26,12 @@ public class PluginSettingsController {
 
     /**
      * constructor just initializes log and acquires settingsService object
-     * @param pluginSettingsFactory - jira bean to be injected by spring
+     * @param pluginSettingsService - jira bean to be injected by spring
      */
     @Inject
-    public PluginSettingsController(PluginSettingsFactory pluginSettingsFactory) {
+    public PluginSettingsController(PluginSettingsService pluginSettingsService) {
         log.info("starting FieldOptionsController instance construction");
-        pluginSettingsService = new PluginSettingsService(pluginSettingsFactory);
+        this.pluginSettingsService = pluginSettingsService;
     }
 
     /**

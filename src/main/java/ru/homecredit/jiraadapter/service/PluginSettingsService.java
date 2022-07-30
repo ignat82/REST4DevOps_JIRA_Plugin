@@ -6,6 +6,8 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import lombok.extern.slf4j.Slf4j;
 import ru.homecredit.jiraadapter.dto.PluginSettings;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import java.util.List;
  * with jira customfield keys
  */
 @Slf4j
+@Named
 public class PluginSettingsService {
     private final com.atlassian.sal.api.pluginsettings.PluginSettings pluginSettings;
 
@@ -21,6 +24,7 @@ public class PluginSettingsService {
      * constructor creates settingsObject
      * @param pluginSettingsFactory - injected by spring to invoking class
      */
+    @Inject
     public PluginSettingsService(PluginSettingsFactory pluginSettingsFactory) {
         log.info("started PluginSettingsService constructor");
         pluginSettings = pluginSettingsFactory.createGlobalSettings();

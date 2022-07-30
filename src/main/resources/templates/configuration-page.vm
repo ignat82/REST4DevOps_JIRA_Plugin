@@ -1,22 +1,30 @@
 <html>
 	<head>
 	    <title>Jira Adapter Configuration</title>
-	    <meta name="decorator" content="atl.admin">
+	    <meta name="decorator" content="atl.admin"/>
 	</head>
 	<body>
-		<form name="customFieldConfiguration" onsubmit="return validateForm()">
-		  <p>Put comma separated customfields keys here<br>
-		  <br>
-		  <b>customfield keys: </b><input type="text" name="customField_id">
-		  <input type="submit" value="Send" >
+		<form class="aui" name="customFieldConfiguration" onsubmit="return validateForm()">
+			<div class="field-group">
+			<label for"customFields_ids">Custom Field's IDs</label>
+				<textarea class="textarea medium-long-field"
+				name="customFields_ids">$currentSettings</textarea>
+				<div class="description">Put comma separated customfields keys here</div>
+			</div>
+		    <div class="buttons container">
+			    <div class="buttons">
+			    <input class="button submit" type="submit" value="Save customfields keys"/>
+				</div>
+			</div>
 		</form>
 
 		<script>
 			function validateForm() {
-			    let x = document.forms["customFieldConfiguration"]["customField_id"].value;
+			    let x = document.forms["customFieldConfiguration"]["customFields_ids"].value;
 			    var value = x;
 			    if (x == "") {
 			        alert("поле пустое");
+			        postCustomFieldID(value);
 			        return false;
 			    } else {
 			        postCustomFieldID(value);
