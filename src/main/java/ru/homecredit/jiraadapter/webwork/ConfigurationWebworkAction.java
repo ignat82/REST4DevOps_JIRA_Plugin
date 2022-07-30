@@ -9,17 +9,17 @@ import javax.inject.Inject;
 
 @Slf4j
 @Getter
-public class JiraAdapterConfigurationWebworkAction extends JiraWebActionSupport {
+public class ConfigurationWebworkAction extends JiraWebActionSupport {
     private final String currentSettings;
     @Inject
-    public JiraAdapterConfigurationWebworkAction(PluginSettingsService pluginSettingsService) {
+    public ConfigurationWebworkAction(PluginSettingsService pluginSettingsService) {
         currentSettings = pluginSettingsService.getSettings().getCommaSeparatedields();
         log.info("current settings are " + currentSettings);
     }
 
     @Override
     public String execute() throws Exception {
-        log.info("JiraAdapterConfigurationWebworkAction.execute() running");
+        log.info("ConfigurationWebworkAction.execute() running");
         return "configuration-page";
     }
 }

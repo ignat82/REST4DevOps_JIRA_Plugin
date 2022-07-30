@@ -4,6 +4,7 @@ import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import ru.homecredit.jiraadapter.dto.PluginSettings;
 
 import javax.inject.Inject;
@@ -57,8 +58,8 @@ public class PluginSettingsService {
     public PluginSettings saveSettings(String requestBody) {
         log.info("started saveSettings method");
         try {
-            String[] fieldsKeys = new JSONObject(requestBody).
-                    getString("settingsString").split(",");
+            String[] fieldsKeys = StringUtils.deleteWhitespace(new JSONObject(requestBody).
+                    getString("settingsString")).split(",");
             for (String key : fieldsKeys) {
                 log.trace("key is: {}", key);
             }

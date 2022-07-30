@@ -9,7 +9,7 @@
     <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     <param name="plugin-icon">images/pluginIcon.png</param>
     <param name="plugin-logo">images/pluginLogo.png</param>
-    <param name="configure.url">/secure/JiraAdapterConfigurationWebworkAction.jspa</param>
+    <param name="configure.url">/secure/ConfigurationWebworkAction.jspa</param>
   </plugin-info>
 
   <resource type="i18n" name="i18n" location="${project.artifactId}"/>
@@ -36,8 +36,8 @@
     <description key="${atlassian.plugin.key}.webwork.description">
       JiraAdapter REST Plugin Configuration Webwork Module description</description>
     <actions>
-      <action name="ru.homecredit.jiraadapter.webwork.JiraAdapterConfigurationWebworkAction"
-              alias="JiraAdapterConfigurationWebworkAction">
+      <action name="ru.homecredit.jiraadapter.webwork.ConfigurationWebworkAction"
+              alias="ConfigurationWebworkAction">
         <view name="configuration-page">/templates/configuration-page.vm</view>
       </action>
     </actions>
@@ -60,7 +60,7 @@
     <label key="${atlassian.plugin.key}.web-item.label">Configure</label>
     <description key="${atlassian.plugin.key}.web-item.description">configuration</description>
     <link linkId="${atlassian.plugin.key}.web-item.link">
-      /secure/JiraAdapterConfigurationWebworkAction.jspa</link>
+      /secure/ConfigurationWebworkAction.jspa</link>
   </web-item>
 </atlassian-plugin>
 
